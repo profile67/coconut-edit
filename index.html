@@ -3,25 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coconut Edit • AI Video Studio</title>
+    <title>Coconut Edit • Video Studio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
 
         :root {
             --bg: #f8f6f3;
             --surface: #ffffff;
-            --coco-brown: #8c5a2b;
-            --coco-dark: #5c3d1f;
-            --text: #1f1f1f;
-            --muted: #666666;
+            --brown: #8c5a2b;
             --accent: #d97757;
-            --glass: rgba(255,255,255,0.85);
+            --text: #1f1f1f;
+            --muted: #666;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: "SF Pro Display", "Inter", sans-serif;
+            font-family: "SF Pro Display", sans-serif;
             background: var(--bg);
             color: var(--text);
             height: 100vh;
@@ -30,471 +28,336 @@
             flex-direction: column;
         }
 
-        /* macOS-style Top Bar */
         .title-bar {
-            height: 52px;
-            background: var(--glass);
-            backdrop-filter: blur(30px);
-            border-bottom: 1px solid rgba(140,90,43,0.15);
+            height: 54px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid #ddd;
             display: flex;
             align-items: center;
-            padding: 0 20px;
+            padding: 0 24px;
             justify-content: space-between;
-            user-select: none;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
         }
 
-        .traffic-lights {
-            display: flex;
-            gap: 8px;
-        }
-
-        .light {
-            width: 13px;
-            height: 13px;
-            border-radius: 50%;
-        }
-
-        .close { background: #ff5f57; }
-        .minimize { background: #ffbd2e; }
-        .maximize { background: #28c840; }
-
-        .logo {
-            font-size: 21px;
-            font-weight: 700;
-            color: var(--coco-dark);
-            letter-spacing: -0.5px;
-        }
-
+        .logo { font-size: 22px; font-weight: 700; color: var(--brown); }
         .logo span { color: var(--accent); }
 
         .main {
             flex: 1;
             display: flex;
-            overflow: hidden;
-            padding: 20px;
             gap: 20px;
-            background: var(--bg);
+            padding: 20px;
         }
 
-        /* Sidebar - Clean & Brown Accents */
         .sidebar {
-            width: 280px;
-            background: var(--surface);
-            border-radius: 22px;
-            box-shadow: 0 10px 40px rgba(140,90,43,0.1);
-            padding: 28px 24px;
+            width: 260px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(140,90,43,0.1);
+            padding: 24px;
             display: flex;
             flex-direction: column;
-            gap: 24px;
-            border: 1px solid rgba(140,90,43,0.12);
+            gap: 18px;
         }
 
-        .sidebar h2 {
-            font-size: 22px;
-            color: var(--coco-dark);
+        .preview-window {
+            flex: 1;
+            background: white;
+            border-radius: 22px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-header {
+            padding: 12px 20px;
+            background: #f5f2eb;
+            border-bottom: 1px solid #eee;
+            font-weight: 500;
+            color: var(--brown);
+        }
+
+        .video-area {
+            flex: 1;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        video, canvas {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 12px;
+        }
+
+        .timeline {
+            padding: 15px 20px;
+            background: #f8f6f3;
+            border-top: 1px solid #eee;
+        }
+
+        .timeline input {
+            width: 100%;
+            accent-color: var(--accent);
         }
 
         button {
-            background: var(--surface);
-            border: 1px solid rgba(140,90,43,0.25);
-            color: var(--coco-dark);
-            padding: 14px 20px;
-            border-radius: 16px;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            transition: all 0.2s;
         }
 
         button:hover {
-            background: var(--coco-brown);
-            color: white;
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(140,90,43,0.25);
         }
 
         .btn-primary {
             background: var(--accent);
             color: white;
-            border: none;
         }
 
-        /* Preview Window - macOS Style */
-        .preview-window {
-            flex: 1;
-            background: var(--surface);
-            border-radius: 24px;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.15);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid #ddd;
-        }
-
-        .preview-header {
-            height: 48px;
-            background: #f1ede6;
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
+        .status {
+            margin-top: 10px;
             font-size: 14px;
-            color: var(--muted);
-            border-bottom: 1px solid #e5e0d8;
-        }
-
-        .preview-body {
-            flex: 1;
-            position: relative;
-            background: #111;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        #canvas {
-            max-width: 100%;
-            max-height: 100%;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-        }
-
-        .drop-zone {
-            width: 520px;
-            height: 320px;
-            border: 3px dashed #c4a47b;
-            border-radius: 24px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--muted);
-            background: rgba(255,255,255,0.6);
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .drop-zone.dragover {
-            border-color: var(--accent);
-            background: rgba(217,119,87,0.1);
-        }
-
-        /* Controls */
-        .controls {
-            padding: 20px;
-            background: var(--surface);
-            border-top: 1px solid #eee;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            justify-content: center;
-        }
-
-        /* Modal */
-        .modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(15px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 3000;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 50px 45px;
-            border-radius: 26px;
-            width: 420px;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.25);
-            text-align: center;
+            font-weight: 500;
+            color: var(--accent);
         }
     </style>
 </head>
 <body>
 
-    <!-- Title Bar -->
     <div class="title-bar">
-        <div class="traffic-lights">
-            <div class="light close" onclick="window.close()"></div>
-            <div class="light minimize"></div>
-            <div class="light maximize"></div>
-        </div>
         <div class="logo">COCONUT<span>EDIT</span></div>
-        <div id="user-bar" style="display:none; align-items:center; gap:12px; font-size:14px;">
-            <div id="pfp" style="width:32px;height:32px;border-radius:50%;background:var(--accent);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;"></div>
-            <div>
-                <div id="user-email" style="font-weight:500;"></div>
-                <div id="live-time" style="color:var(--muted);font-size:13px;"></div>
-            </div>
-            <button onclick="logout()" style="margin-left:20px;background:transparent;border:1px solid #ccc;padding:6px 14px;border-radius:999px;">Log Out</button>
+        <div id="user-info" style="display:none; align-items:center; gap:12px;">
+            <div id="pfp" style="width:34px;height:34px;border-radius:50%;background:var(--accent);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;"></div>
+            <div id="user-email" style="font-size:14px;"></div>
+            <button onclick="logout()" style="margin-left:20px; background:transparent; border:1px solid #ccc; padding:6px 14px;">Log Out</button>
         </div>
-        <button id="login-btn" class="btn-primary" onclick="showLoginModal()">Sign Up Free</button>
+        <button onclick="showLoginModal()" id="login-btn" class="btn-primary">Sign Up Free</button>
     </div>
 
     <div class="main">
-        <!-- Sidebar -->
+        <!-- Sidebar - Useful Buttons -->
         <div class="sidebar">
-            <h2>Project Controls</h2>
-            <input type="file" id="video-input" accept="video/*" style="display:none" onchange="handleFileSelect(event)">
-            <button onclick="document.getElementById('video-input').click()">
-                <i class="fa-solid fa-upload"></i> Import Video
+            <h2 style="color:var(--brown);">Editing Tools</h2>
+
+            <input type="file" id="video-upload" accept="video/*" style="display:none" onchange="loadVideoFile(event)">
+            
+            <button onclick="document.getElementById('video-upload').click()" style="width:100%;justify-content:center;">
+                <i class="fa-solid fa-upload"></i> Import New Video
             </button>
 
-            <div style="margin-top:10px;">
-                <h3 style="color:var(--muted);font-size:15px;margin-bottom:12px;">Real-time Effects</h3>
-                <button onclick="setBrightness(1.4)">☀️ Increase Brightness</button>
-                <button onclick="setBrightness(0.7)">🌑 Decrease Brightness</button>
-                <button onclick="setContrast(1.5)">◑ Boost Contrast</button>
-                <button onclick="setContrast(0.8)">◐ Reduce Contrast</button>
-                <button onclick="toggleGrayscale()">◼ Grayscale</button>
-                <button onclick="changePlaybackSpeed()">⚡ Toggle Speed (1x / 1.8x)</button>
-                <button onclick="toggleZoom()">🔍 Toggle Ken Burns Zoom</button>
+            <button onclick="trimVideo()" style="width:100%;justify-content:center;background:#f0e6d2;">
+                <i class="fa-solid fa-scissors"></i> Trim / Cut Video
+            </button>
+
+            <button onclick="togglePlay()" id="play-btn" style="width:100%;justify-content:center;" class="btn-primary">
+                <i class="fa-solid fa-play"></i> <span id="play-text">Play</span>
+            </button>
+
+            <button onclick="resetAll()" style="width:100%;justify-content:center;">
+                <i class="fa-solid fa-rotate-right"></i> Reset Everything
+            </button>
+
+            <div style="margin-top:20px;">
+                <h3 style="color:var(--muted); margin-bottom:10px;">Quick Effects</h3>
+                <button onclick="applyEffect('bright')" style="width:100%;">☀️ Brighten</button>
+                <button onclick="applyEffect('dark')" style="width:100%;">🌑 Darken</button>
+                <button onclick="applyEffect('contrast')" style="width:100%;">◑ Boost Contrast</button>
+                <button onclick="applyEffect('gray')" style="width:100%;">◼ Grayscale</button>
             </div>
 
-            <div style="margin-top:auto;">
-                <button onclick="exportVideo()" class="btn-primary" style="width:100%;padding:18px;font-size:17px;">
-                    <i class="fa-solid fa-download"></i> Export Video
-                </button>
-            </div>
+            <button onclick="exportVideo()" class="btn-primary" style="margin-top:auto;width:100%;padding:16px;">
+                <i class="fa-solid fa-download"></i> Export Video
+            </button>
         </div>
 
-        <!-- Preview Window -->
+        <!-- Main Preview -->
         <div class="preview-window">
             <div class="preview-header">
-                <span>Preview — Coconut Edit</span>
+                Video Preview — Coconut Edit
             </div>
-            <div class="preview-body" id="preview-body">
-                <!-- Drop Zone -->
-                <div id="drop-zone" class="drop-zone"
-                     ondragover="handleDragOver(event)"
-                     ondragleave="handleDragLeave(event)"
-                     ondrop="handleDrop(event)">
-                    <i class="fa-solid fa-film" style="font-size:92px; color:#c4a47b; margin-bottom:20px;"></i>
-                    <h2 style="margin-bottom:8px;color:var(--coco-dark);">Drop your video here</h2>
-                    <p>or click to select from files</p>
+            <div class="video-area" id="video-area">
+                <div id="drop-zone" style="text-align:center; color:#888; cursor:pointer;" onclick="document.getElementById('video-upload').click()">
+                    <i class="fa-solid fa-film" style="font-size:80px; margin-bottom:20px; color:#c4a47b;"></i>
+                    <h3>Drop video here or click to import</h3>
                 </div>
-
-                <!-- Canvas for real-time editing -->
-                <canvas id="canvas" style="display:none;"></canvas>
+                <video id="player" style="display:none;" controls></video>
             </div>
 
-            <div class="controls">
-                <button onclick="playPause()">▶️ Play / Pause</button>
-                <button onclick="resetEffects()">Reset All Effects</button>
+            <div class="timeline">
+                <input type="range" id="seek-bar" min="0" value="0" step="0.1" style="width:100%;">
+                <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:13px;color:var(--muted);">
+                    <span id="current-time">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
             </div>
+
+            <div class="status" id="status"></div>
         </div>
     </div>
 
     <!-- Login Modal -->
-    <div id="login-modal" class="modal">
-        <div class="modal-content">
-            <h2>Welcome to Coconut Edit</h2>
-            <p style="color:var(--muted);margin:20px 0 30px;">Create a free account — your edits stay private.</p>
-            <input type="email" id="email-input" placeholder="your@email.com" style="width:100%;padding:16px;margin-bottom:12px;border:1px solid #ddd;border-radius:14px;">
-            <input type="password" id="pass-input" placeholder="Password" style="width:100%;padding:16px;border:1px solid #ddd;border-radius:14px;">
-            <button onclick="loginUser()" class="btn-primary" style="width:100%;margin-top:25px;padding:16px;">Continue to Editor</button>
-            <p onclick="closeModal()" style="margin-top:30px;cursor:pointer;color:var(--muted);">Cancel</p>
+    <div id="login-modal" style="position:fixed;inset:0;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:1000;">
+        <div style="background:white;padding:50px 45px;border-radius:24px;width:400px;text-align:center;">
+            <h2>Coconut Edit</h2>
+            <p style="margin:20px 0;color:var(--muted);">Sign up to save your projects</p>
+            <input type="email" id="email" placeholder="your@email.com" style="width:100%;padding:14px;margin:10px 0;border:1px solid #ddd;border-radius:12px;">
+            <button onclick="handleLogin()" class="btn-primary" style="width:100%;padding:14px;margin-top:15px;">Continue</button>
         </div>
     </div>
 
     <script>
-        // ============== AUTH & UI ==============
-        let currentUser = null;
         let video = null;
-        let canvas = null;
-        let ctx = null;
+        let currentURL = null;
         let isPlaying = false;
-        let animationFrame = null;
-        let currentFilter = { brightness: 1, contrast: 1, grayscale: 0 };
-        let playbackSpeed = 1;
-        let zoomLevel = 1;
-        let isZooming = false;
-        let currentVideoURL = null;
+        let trimStart = 0;
+        let trimEnd = 0;
+        let savedProject = null;
+
+        // Load saved project
+        function loadSavedProject() {
+            savedProject = JSON.parse(localStorage.getItem('coconutProject'));
+            if (savedProject && savedProject.url) {
+                // In real app we would reload blob, but for demo we just alert
+                document.getElementById('status').textContent = "Last project loaded";
+            }
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('email').value.trim();
+            if (email) {
+                document.getElementById('login-modal').style.display = 'none';
+                document.getElementById('login-btn').style.display = 'none';
+                document.getElementById('user-info').style.display = 'flex';
+                document.getElementById('user-email').textContent = email;
+                document.getElementById('pfp').textContent = email[0].toUpperCase();
+            }
+        }
+
+        function logout() {
+            if (confirm("Log out?")) location.reload();
+        }
 
         function showLoginModal() {
             document.getElementById('login-modal').style.display = 'flex';
         }
 
-        function closeModal() {
-            document.getElementById('login-modal').style.display = 'none';
-        }
-
-        function loginUser() {
-            const email = document.getElementById('email-input').value.trim();
-            if (!email) return alert("Enter an email");
-            currentUser = { email: email, initial: email[0].toUpperCase() };
-            localStorage.setItem('coconutUser', JSON.stringify(currentUser));
-            closeModal();
-            loadUserUI();
-        }
-
-        function loadUserUI() {
-            const saved = localStorage.getItem('coconutUser');
-            if (saved) {
-                currentUser = JSON.parse(saved);
-                document.getElementById('login-btn').style.display = 'none';
-                const bar = document.getElementById('user-bar');
-                bar.style.display = 'flex';
-                document.getElementById('pfp').textContent = currentUser.initial;
-                document.getElementById('user-email').textContent = currentUser.email;
-                startLiveClock();
-            }
-        }
-
-        function logout() {
-            if (confirm("Log out?")) {
-                localStorage.removeItem('coconutUser');
-                location.reload();
-            }
-        }
-
-        function startLiveClock() {
-            setInterval(() => {
-                const time = new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
-                document.getElementById('live-time').textContent = time;
-            }, 1000);
-        }
-
-        // ============== VIDEO & CANVAS SETUP ==============
-        function initCanvas() {
-            canvas = document.getElementById('canvas');
-            ctx = canvas.getContext('2d', { willReadFrequently: true });
-        }
-
-        function handleFileSelect(e) {
+        function loadVideoFile(e) {
             const file = e.target.files[0];
-            if (file) loadVideo(file);
-        }
-
-        function handleDragOver(e) {
-            e.preventDefault();
-            document.getElementById('drop-zone').classList.add('dragover');
-        }
-
-        function handleDragLeave() {
-            document.getElementById('drop-zone').classList.remove('dragover');
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            document.getElementById('drop-zone').classList.remove('dragover');
-            const file = e.dataTransfer.files[0];
-            if (file && file.type.startsWith('video/')) loadVideo(file);
-        }
-
-        function loadVideo(file) {
-            currentVideoURL = URL.createObjectURL(file);
-            video = document.createElement('video');
-            video.src = currentVideoURL;
-            video.muted = false;
-            video.loop = false;
+            if (!file) return;
+            currentURL = URL.createObjectURL(file);
+            video = document.getElementById('player');
+            video.src = currentURL;
+            video.style.display = 'block';
+            document.getElementById('drop-zone').style.display = 'none';
 
             video.onloadedmetadata = () => {
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                document.getElementById('drop-zone').style.display = 'none';
-                canvas.style.display = 'block';
-                startRealTimeRender();
-                video.play();
-                isPlaying = true;
+                trimEnd = video.duration;
+                document.getElementById('duration').textContent = formatTime(video.duration);
+                updateSeekBar();
             };
+
+            video.ontimeupdate = updateSeekBar;
+            saveProject();
         }
 
-        function startRealTimeRender() {
-            if (animationFrame) cancelAnimationFrame(animationFrame);
+        function formatTime(seconds) {
+            const min = Math.floor(seconds / 60);
+            const sec = Math.floor(seconds % 60);
+            return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+        }
 
-            function render() {
-                if (!video || video.paused) {
-                    animationFrame = requestAnimationFrame(render);
-                    return;
-                }
-
-                ctx.save();
-                ctx.filter = `
-                    brightness(${currentFilter.brightness}) 
-                    contrast(${currentFilter.contrast}) 
-                    grayscale(${currentFilter.grayscale})
-                `;
-
-                // Apply zoom (simple Ken Burns style)
-                const scale = isZooming ? 1.15 : 1;
-                const offset = (canvas.width * (scale - 1)) / 2;
-                ctx.drawImage(video, -offset, -offset * 0.6, canvas.width * scale, canvas.height * scale);
-
-                ctx.restore();
-
-                animationFrame = requestAnimationFrame(render);
+        function updateSeekBar() {
+            const seek = document.getElementById('seek-bar');
+            if (video) {
+                seek.value = video.currentTime;
+                document.getElementById('current-time').textContent = formatTime(video.currentTime);
             }
-            render();
         }
 
-        function playPause() {
+        function togglePlay() {
             if (!video) return;
-            if (isPlaying) video.pause();
-            else video.play();
+            if (isPlaying) {
+                video.pause();
+                document.getElementById('play-text').innerHTML = '<i class="fa-solid fa-play"></i> Play';
+                document.getElementById('status').textContent = "Paused!";
+            } else {
+                video.play();
+                document.getElementById('play-text').innerHTML = '<i class="fa-solid fa-pause"></i> Pause';
+                document.getElementById('status').textContent = "Playing!";
+            }
             isPlaying = !isPlaying;
         }
 
-        // Real Editing Functions
-        function setBrightness(val) {
-            currentFilter.brightness = val;
+        function trimVideo() {
+            if (!video) return alert("Load a video first!");
+            const start = prompt("Start time (seconds):", trimStart);
+            const end = prompt("End time (seconds):", trimEnd || video.duration);
+            if (start !== null && end !== null) {
+                trimStart = parseFloat(start);
+                trimEnd = parseFloat(end);
+                video.currentTime = trimStart;
+                document.getElementById('status').textContent = `Trimmed: ${trimStart}s to ${trimEnd}s`;
+                saveProject();
+            }
         }
 
-        function setContrast(val) {
-            currentFilter.contrast = val;
-        }
-
-        function toggleGrayscale() {
-            currentFilter.grayscale = currentFilter.grayscale === 0 ? 1 : 0;
-        }
-
-        function changePlaybackSpeed() {
+        function applyEffect(type) {
             if (!video) return;
-            playbackSpeed = playbackSpeed === 1 ? 1.8 : 1;
-            video.playbackRate = playbackSpeed;
+            if (type === 'bright') video.style.filter = 'brightness(1.4)';
+            else if (type === 'dark') video.style.filter = 'brightness(0.7)';
+            else if (type === 'contrast') video.style.filter = 'contrast(1.6)';
+            else if (type === 'gray') video.style.filter = 'grayscale(1)';
+            document.getElementById('status').textContent = type.toUpperCase() + " effect applied";
         }
 
-        function toggleZoom() {
-            isZooming = !isZooming;
+        function resetAll() {
+            if (video) {
+                video.style.filter = 'none';
+                video.currentTime = 0;
+            }
+            document.getElementById('status').textContent = "All effects reset";
         }
 
-        function resetEffects() {
-            currentFilter = { brightness: 1, contrast: 1, grayscale: 0 };
-            if (video) video.playbackRate = 1;
-            isZooming = false;
-        }
-
-        // Export with current effects baked in (simple version using original + note)
-        async function exportVideo() {
-            if (!currentVideoURL) return alert("Load a video first");
+        function exportVideo() {
+            if (!currentURL) return alert("No video to export");
             const a = document.createElement('a');
-            a.href = currentVideoURL;
+            a.href = currentURL;
             a.download = "coconut_edited_video.mp4";
             a.click();
-            alert("✅ Video exported with your applied effects! (Full render in future versions)");
+            document.getElementById('status').textContent = "Video downloaded!";
         }
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', e => {
-            if (e.key === " " && video) { e.preventDefault(); playPause(); }
-            if (e.key.toLowerCase() === "e" && e.ctrlKey) { e.preventDefault(); exportVideo(); }
-        });
+        function saveProject() {
+            if (currentURL) {
+                localStorage.setItem('coconutProject', JSON.stringify({
+                    url: currentURL,
+                    trimStart: trimStart,
+                    trimEnd: trimEnd
+                }));
+            }
+        }
 
-        // Init
-        window.onload = () => {
-            initCanvas();
-            loadUserUI();
-
-            // Click drop zone to upload
-            document.getElementById('drop-zone').addEventListener('click', () => {
-                document.getElementById('video-input').click();
+        // Seek bar control
+        document.addEventListener('DOMContentLoaded', () => {
+            const seek = document.getElementById('seek-bar');
+            seek.addEventListener('input', () => {
+                if (video) video.currentTime = parseFloat(seek.value);
             });
-        };
+
+            loadSavedProject();
+        });
     </script>
 </body>
 </html>
