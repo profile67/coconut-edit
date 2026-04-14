@@ -1,363 +1,2663 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coconut Edit • Video Studio</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CocoEdit — Video Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --coco-cream: #FDF6E3;
+    --coco-brown: #3D2B1F;
+    --coco-dark: #1C1208;
+    --coco-mid: #6B4226;
+    --coco-light: #C8A97E;
+    --coco-fiber: #8B6914;
+    --coco-white: #FFFDF7;
+    --coco-shell: #2A1A0E;
+    --coco-meat: #F5EDD6;
+    --coco-water: #C7E8D0;
+    --coco-green: #2D5A27;
+    --coco-green-light: #4CAF50;
+    --coco-accent: #E8821A;
+    --coco-accent2: #D4A843;
+    --coco-panel: rgba(28,18,8,0.97);
+    --coco-panel2: rgba(42,26,14,0.95);
+    --coco-border: rgba(200,169,126,0.18);
+    --coco-border2: rgba(200,169,126,0.35);
+    --coco-glass: rgba(253,246,227,0.05);
+    --coco-glass2: rgba(253,246,227,0.09);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --radius-xl: 28px;
+    --radius-pill: 999px;
+    --shadow-glow: 0 0 20px rgba(232,130,26,0.2);
+    --shadow-deep: 0 24px 64px rgba(0,0,0,0.7);
+    --shadow-card: 0 8px 32px rgba(0,0,0,0.5);
+    --shadow-btn: 0 4px 16px rgba(232,130,26,0.35);
+    --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
+    --transition-slow: 0.45s cubic-bezier(0.4,0,0.2,1);
+  }
 
-        :root {
-            --bg: #f8f6f3;
-            --surface: #ffffff;
-            --brown: #8c5a2b;
-            --accent: #d97757;
-            --text: #1f1f1f;
-            --muted: #666;
-        }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: "SF Pro Display", sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
+  html { font-size: 16px; scroll-behavior: smooth; }
 
-        .title-bar {
-            height: 54px;
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid #ddd;
-            display: flex;
-            align-items: center;
-            padding: 0 24px;
-            justify-content: space-between;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
-        }
+  body {
+    background: var(--coco-dark);
+    color: var(--coco-cream);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 50% -20%, rgba(61,43,31,0.9) 0%, transparent 70%),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C8A97E' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
 
-        .logo { font-size: 22px; font-weight: 700; color: var(--brown); }
-        .logo span { color: var(--accent); }
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--coco-shell); }
+  ::-webkit-scrollbar-thumb { background: var(--coco-mid); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--coco-light); }
 
-        .main {
-            flex: 1;
-            display: flex;
-            gap: 20px;
-            padding: 20px;
-        }
+  /* ─── TOPBAR ─── */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    height: 52px;
+    background: rgba(20,12,5,0.88);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border-bottom: 0.5px solid var(--coco-border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px;
+    gap: 12px;
+  }
 
-        .sidebar {
-            width: 260px;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(140,90,43,0.1);
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-        }
+  .topbar-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600; font-size: 17px;
+    color: var(--coco-cream);
+    letter-spacing: -0.3px;
+    flex-shrink: 0;
+  }
 
-        .preview-window {
-            flex: 1;
-            background: white;
-            border-radius: 22px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, #6B4226 0%, #E8821A 50%, #D4A843 100%);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 2px 12px rgba(232,130,26,0.4);
+    flex-shrink: 0;
+  }
 
-        .preview-header {
-            padding: 12px 20px;
-            background: #f5f2eb;
-            border-bottom: 1px solid #eee;
-            font-weight: 500;
-            color: var(--brown);
-        }
+  .topbar-center {
+    display: flex; align-items: center; gap: 4px;
+    background: rgba(255,255,255,0.05);
+    border: 0.5px solid var(--coco-border);
+    border-radius: var(--radius-pill);
+    padding: 4px;
+  }
 
-        .video-area {
-            flex: 1;
-            background: #111;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
+  .topbar-tab {
+    padding: 5px 14px;
+    border-radius: var(--radius-pill);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: rgba(253,246,227,0.55);
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+    border: none; background: none;
+  }
 
-        video, canvas {
-            max-width: 100%;
-            max-height: 100%;
-            border-radius: 12px;
-        }
+  .topbar-tab:hover { color: var(--coco-cream); }
+  .topbar-tab.active {
+    background: rgba(232,130,26,0.22);
+    color: var(--coco-accent);
+    border: 0.5px solid rgba(232,130,26,0.3);
+  }
 
-        .timeline {
-            padding: 15px 20px;
-            background: #f8f6f3;
-            border-top: 1px solid #eee;
-        }
+  .topbar-right {
+    display: flex; align-items: center; gap: 8px;
+    flex-shrink: 0;
+  }
 
-        .timeline input {
-            width: 100%;
-            accent-color: var(--accent);
-        }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    transition: var(--transition);
+    white-space: nowrap;
+    text-decoration: none;
+  }
 
-        button {
-            padding: 12px 18px;
-            border: none;
-            border-radius: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
+  .btn:active { transform: scale(0.97); }
 
-        button:hover {
-            transform: translateY(-2px);
-        }
+  .btn-ghost {
+    background: transparent;
+    color: rgba(253,246,227,0.7);
+    border: 0.5px solid var(--coco-border);
+    border-radius: var(--radius-sm);
+    padding: 7px 14px;
+    font-size: 12.5px;
+  }
+  .btn-ghost:hover { background: var(--coco-glass); color: var(--coco-cream); border-color: var(--coco-border2); }
 
-        .btn-primary {
-            background: var(--accent);
-            color: white;
-        }
+  .btn-primary {
+    background: linear-gradient(135deg, #E8821A 0%, #D4A843 100%);
+    color: var(--coco-dark);
+    border-radius: var(--radius-sm);
+    padding: 7px 16px;
+    font-size: 12.5px;
+    font-weight: 600;
+    box-shadow: var(--shadow-btn);
+  }
+  .btn-primary:hover { filter: brightness(1.1); box-shadow: 0 6px 20px rgba(232,130,26,0.5); }
 
-        .status {
-            margin-top: 10px;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--accent);
-        }
-    </style>
+  .btn-icon {
+    width: 32px; height: 32px;
+    background: var(--coco-glass);
+    border: 0.5px solid var(--coco-border);
+    border-radius: var(--radius-sm);
+    color: rgba(253,246,227,0.7);
+    font-size: 14px;
+    padding: 0;
+  }
+  .btn-icon:hover { background: var(--coco-glass2); color: var(--coco-cream); }
+
+  /* ─── MAIN LAYOUT ─── */
+  .app-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr 280px;
+    grid-template-rows: auto 1fr auto;
+    height: calc(100vh - 52px);
+    margin-top: 52px;
+    overflow: hidden;
+  }
+
+  /* ─── PANELS ─── */
+  .panel {
+    background: var(--coco-panel);
+    border-right: 0.5px solid var(--coco-border);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+
+  .panel-right {
+    background: var(--coco-panel2);
+    border-left: 0.5px solid var(--coco-border);
+    border-right: none;
+    overflow-y: auto;
+  }
+
+  .panel-header {
+    padding: 14px 16px 10px;
+    border-bottom: 0.5px solid var(--coco-border);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .panel-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(200,169,126,0.7);
+  }
+
+  .panel-body { flex: 1; overflow-y: auto; padding: 12px; }
+
+  /* ─── CENTER AREA ─── */
+  .center-area {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    background: #0E0805;
+  }
+
+  /* ─── PREVIEW ─── */
+  .preview-area {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative;
+    background:
+      radial-gradient(ellipse 70% 70% at 50% 50%, rgba(61,43,31,0.3) 0%, transparent 70%),
+      #0A0603;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .preview-grain {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    opacity: 0.5;
+  }
+
+  .preview-frame {
+    position: relative;
+    width: min(85%, 780px);
+    aspect-ratio: 16/9;
+    background: #1a1008;
+    border-radius: var(--radius-lg);
+    border: 1.5px solid rgba(200,169,126,0.2);
+    box-shadow: var(--shadow-deep), 0 0 0 1px rgba(232,130,26,0.08);
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    cursor: pointer;
+    transition: var(--transition-slow);
+  }
+
+  .preview-frame:hover { border-color: rgba(232,130,26,0.35); box-shadow: var(--shadow-deep), 0 0 40px rgba(232,130,26,0.12); }
+
+  .preview-placeholder {
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  .preview-placeholder-icon { font-size: 52px; }
+  .preview-placeholder-text { font-size: 14px; font-weight: 500; color: var(--coco-light); }
+  .preview-placeholder-sub { font-size: 12px; color: rgba(200,169,126,0.5); text-align: center; max-width: 220px; }
+
+  .preview-video {
+    width: 100%; height: 100%; object-fit: contain;
+    display: none;
+    background: #000;
+  }
+
+  .preview-overlay {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.35);
+    opacity: 0;
+    transition: var(--transition);
+  }
+  .preview-frame:hover .preview-overlay { opacity: 1; }
+
+  .preview-play-btn {
+    width: 64px; height: 64px;
+    background: rgba(232,130,26,0.9);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    color: white;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 4px 24px rgba(232,130,26,0.5);
+    transition: var(--transition);
+    padding-left: 4px;
+  }
+  .preview-play-btn:hover { transform: scale(1.08); background: rgba(232,130,26,1); }
+
+  /* ─── TRANSPORT CONTROLS ─── */
+  .transport-bar {
+    padding: 10px 20px;
+    border-top: 0.5px solid var(--coco-border);
+    background: rgba(15,9,4,0.9);
+    display: flex; align-items: center; gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .transport-controls { display: flex; align-items: center; gap: 6px; }
+
+  .transport-btn {
+    width: 34px; height: 34px;
+    background: var(--coco-glass);
+    border: 0.5px solid var(--coco-border);
+    border-radius: var(--radius-sm);
+    color: var(--coco-cream);
+    font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    flex-shrink: 0;
+  }
+  .transport-btn:hover { background: var(--coco-glass2); border-color: var(--coco-border2); }
+  .transport-btn.play-pause {
+    background: linear-gradient(135deg, #E8821A, #D4A843);
+    color: var(--coco-dark);
+    font-weight: 700;
+    border: none;
+    box-shadow: 0 2px 10px rgba(232,130,26,0.4);
+  }
+  .transport-btn.play-pause:hover { filter: brightness(1.1); }
+
+  .timecode {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--coco-accent2);
+    min-width: 90px;
+    background: rgba(0,0,0,0.3);
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 0.5px solid var(--coco-border);
+    text-align: center;
+  }
+
+  .volume-row {
+    display: flex; align-items: center; gap: 8px;
+    margin-left: auto;
+  }
+
+  .vol-icon { font-size: 14px; color: rgba(253,246,227,0.5); }
+
+  /* ─── SCRUBBER ─── */
+  .scrubber-wrap {
+    flex: 1;
+    position: relative;
+    height: 22px;
+    display: flex; align-items: center;
+  }
+
+  .scrubber-track {
+    width: 100%; height: 4px;
+    background: rgba(200,169,126,0.15);
+    border-radius: 2px;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .scrubber-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #E8821A, #D4A843);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+
+  .scrubber-thumb {
+    position: absolute;
+    top: 50%; transform: translate(-50%, -50%);
+    width: 14px; height: 14px;
+    background: var(--coco-accent);
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(232,130,26,0.3);
+    cursor: grab;
+    left: 0%;
+    transition: box-shadow var(--transition);
+  }
+  .scrubber-thumb:hover { box-shadow: 0 0 0 4px rgba(232,130,26,0.3); }
+
+  /* ─── RANGE INPUT CUSTOM ─── */
+  input[type=range] {
+    -webkit-appearance: none;
+    height: 3px;
+    border-radius: 2px;
+    background: rgba(200,169,126,0.2);
+    outline: none;
+    cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 13px; height: 13px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #E8821A, #D4A843);
+    box-shadow: 0 1px 6px rgba(232,130,26,0.4);
+    cursor: grab;
+  }
+  input[type=range]::-webkit-slider-thumb:active { cursor: grabbing; }
+
+  /* ─── TIMELINE ─── */
+  .timeline-area {
+    height: 160px;
+    border-top: 0.5px solid var(--coco-border);
+    background: rgba(12,7,3,0.95);
+    flex-shrink: 0;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+
+  .timeline-header {
+    height: 28px;
+    border-bottom: 0.5px solid var(--coco-border);
+    display: flex; align-items: center;
+    padding: 0 12px;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .timeline-tools { display: flex; align-items: center; gap: 4px; }
+
+  .tl-btn {
+    height: 22px; padding: 0 10px;
+    background: var(--coco-glass);
+    border: 0.5px solid var(--coco-border);
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(253,246,227,0.65);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex; align-items: center; gap: 4px;
+    white-space: nowrap;
+  }
+  .tl-btn:hover { background: var(--coco-glass2); color: var(--coco-cream); }
+  .tl-btn.active { background: rgba(232,130,26,0.2); color: var(--coco-accent); border-color: rgba(232,130,26,0.35); }
+
+  .timeline-ruler {
+    height: 20px;
+    border-bottom: 0.5px solid var(--coco-border);
+    background: rgba(20,12,5,0.8);
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+
+  .timeline-tracks {
+    flex: 1; overflow-y: auto; overflow-x: hidden;
+    padding: 6px 12px;
+    display: flex; flex-direction: column; gap: 5px;
+  }
+
+  .track-row {
+    height: 32px; display: flex; align-items: center; gap: 8px;
+  }
+
+  .track-label {
+    width: 68px; flex-shrink: 0;
+    font-size: 10.5px; font-weight: 500;
+    color: rgba(200,169,126,0.6);
+    text-align: right;
+    letter-spacing: 0.02em;
+  }
+
+  .track-lane {
+    flex: 1; height: 26px;
+    background: rgba(200,169,126,0.06);
+    border-radius: 5px;
+    border: 0.5px solid rgba(200,169,126,0.1);
+    position: relative; overflow: hidden;
+    cursor: pointer;
+  }
+
+  .track-clip {
+    position: absolute; top: 3px; bottom: 3px;
+    border-radius: 4px;
+    display: flex; align-items: center; padding: 0 8px;
+    font-size: 9.5px; font-weight: 600;
+    white-space: nowrap; overflow: hidden;
+    cursor: pointer;
+    transition: filter var(--transition);
+  }
+  .track-clip:hover { filter: brightness(1.15); }
+
+  .clip-video { left: 0%; width: 70%; background: linear-gradient(90deg, rgba(61,43,31,0.9), rgba(107,66,38,0.9)); color: var(--coco-cream); border: 0.5px solid rgba(200,169,126,0.25); }
+  .clip-audio { left: 5%; width: 80%; background: linear-gradient(90deg, rgba(45,90,39,0.9), rgba(76,175,80,0.5)); color: #b8f0bc; border: 0.5px solid rgba(76,175,80,0.25); }
+  .clip-music { left: 0%; width: 90%; background: linear-gradient(90deg, rgba(28,50,80,0.9), rgba(55,138,221,0.5)); color: #b0d4f5; border: 0.5px solid rgba(55,138,221,0.2); }
+  .clip-text { left: 20%; width: 40%; background: linear-gradient(90deg, rgba(80,50,15,0.9), rgba(212,168,67,0.5)); color: #f5e0a0; border: 0.5px solid rgba(212,168,67,0.25); }
+
+  /* ─── LEFT PANEL: MEDIA ─── */
+  .media-search {
+    display: flex; align-items: center; gap: 6px;
+    margin: 12px 12px 8px;
+    background: rgba(255,255,255,0.05);
+    border: 0.5px solid var(--coco-border);
+    border-radius: var(--radius-sm);
+    padding: 7px 10px;
+  }
+
+  .media-search input {
+    flex: 1; background: none; border: none; outline: none;
+    font-size: 12.5px; color: var(--coco-cream);
+    font-family: 'DM Sans', sans-serif;
+  }
+  .media-search input::placeholder { color: rgba(200,169,126,0.4); }
+  .media-search-icon { font-size: 13px; color: rgba(200,169,126,0.45); }
+
+  .media-tabs {
+    display: flex; gap: 2px; padding: 0 12px 8px;
+    flex-shrink: 0;
+  }
+
+  .media-tab {
+    flex: 1; padding: 5px 6px;
+    background: none;
+    border: 0.5px solid var(--coco-border);
+    border-radius: 6px;
+    font-size: 11px; font-weight: 500;
+    color: rgba(200,169,126,0.55);
+    cursor: pointer; transition: var(--transition);
+    text-align: center;
+  }
+  .media-tab:hover { color: var(--coco-cream); background: var(--coco-glass); }
+  .media-tab.active { background: rgba(232,130,26,0.18); color: var(--coco-accent); border-color: rgba(232,130,26,0.3); }
+
+  .media-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 6px; padding: 0 12px;
+  }
+
+  .media-thumb {
+    aspect-ratio: 16/9;
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    border: 0.5px solid var(--coco-border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    cursor: pointer; position: relative; overflow: hidden;
+    transition: var(--transition);
+  }
+  .media-thumb:hover { border-color: var(--coco-border2); background: var(--coco-glass); transform: scale(1.02); }
+
+  .media-thumb-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    font-size: 9.5px; padding: 3px 6px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.75));
+    color: rgba(253,246,227,0.8);
+    font-weight: 500;
+  }
+
+  .upload-zone {
+    margin: 8px 12px;
+    border: 1.5px dashed rgba(200,169,126,0.2);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    flex-shrink: 0;
+  }
+  .upload-zone:hover { border-color: rgba(232,130,26,0.4); background: rgba(232,130,26,0.05); }
+  .upload-zone-icon { font-size: 22px; margin-bottom: 6px; }
+  .upload-zone-text { font-size: 11.5px; font-weight: 500; color: var(--coco-light); margin-bottom: 2px; }
+  .upload-zone-sub { font-size: 10.5px; color: rgba(200,169,126,0.45); }
+
+  .btn-upload-trigger {
+    margin: 6px 12px 0;
+    width: calc(100% - 24px);
+    padding: 8px;
+    background: linear-gradient(135deg, rgba(232,130,26,0.15), rgba(212,168,67,0.1));
+    border: 0.5px solid rgba(232,130,26,0.35);
+    border-radius: var(--radius-sm);
+    color: var(--coco-accent);
+    font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: var(--transition);
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-upload-trigger:hover { background: rgba(232,130,26,0.2); }
+
+  /* ─── RIGHT PANEL: INSPECTOR ─── */
+  .inspector-section {
+    padding: 12px 14px;
+    border-bottom: 0.5px solid var(--coco-border);
+  }
+
+  .inspector-section-title {
+    font-size: 10.5px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: rgba(200,169,126,0.55);
+    margin-bottom: 12px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .inspector-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+    gap: 10px;
+  }
+
+  .inspector-label {
+    font-size: 12px; color: rgba(200,169,126,0.7);
+    min-width: 70px; flex-shrink: 0;
+  }
+
+  .inspector-val {
+    font-size: 12px; font-weight: 500; color: var(--coco-cream);
+    flex: 1; text-align: right;
+  }
+
+  .inspector-input {
+    flex: 1;
+    background: rgba(255,255,255,0.06);
+    border: 0.5px solid var(--coco-border);
+    border-radius: 6px;
+    padding: 5px 9px;
+    font-size: 12px;
+    color: var(--coco-cream);
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    text-align: right;
+    transition: var(--transition);
+    min-width: 0;
+  }
+  .inspector-input:focus { border-color: rgba(232,130,26,0.5); background: rgba(232,130,26,0.06); }
+
+  .inspector-slider-row {
+    margin-bottom: 12px;
+  }
+
+  .inspector-slider-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  .inspector-slider-label { font-size: 12px; color: rgba(200,169,126,0.7); }
+  .inspector-slider-val { font-size: 12px; font-weight: 500; color: var(--coco-cream); min-width: 32px; text-align: right; font-family: 'Space Mono', monospace; }
+
+  .full-range { width: 100%; display: block; }
+
+  /* ─── TOGGLE ─── */
+  .toggle-wrap {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .toggle {
+    position: relative; width: 34px; height: 19px; flex-shrink: 0;
+  }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-track {
+    position: absolute; inset: 0;
+    background: rgba(200,169,126,0.15);
+    border-radius: 10px;
+    border: 0.5px solid var(--coco-border);
+    cursor: pointer; transition: var(--transition);
+  }
+  .toggle input:checked + .toggle-track { background: rgba(232,130,26,0.7); border-color: rgba(232,130,26,0.5); }
+  .toggle-thumb {
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 13px; height: 13px;
+    background: #fff;
+    border-radius: 50%;
+    transition: var(--transition);
+    pointer-events: none;
+  }
+  .toggle input:checked ~ .toggle-thumb { left: 18px; }
+
+  .toggle-label { font-size: 12px; color: rgba(200,169,126,0.7); }
+
+  /* ─── COLOR SWATCH ROW ─── */
+  .color-swatches { display: flex; gap: 5px; flex-wrap: wrap; }
+
+  .color-swatch {
+    width: 22px; height: 22px; border-radius: 5px;
+    cursor: pointer; transition: var(--transition);
+    border: 1.5px solid transparent;
+  }
+  .color-swatch:hover { transform: scale(1.15); }
+  .color-swatch.selected { border-color: var(--coco-cream); }
+
+  /* ─── SELECT ─── */
+  .inspector-select {
+    flex: 1; min-width: 0;
+    background: rgba(255,255,255,0.06);
+    border: 0.5px solid var(--coco-border);
+    border-radius: 6px;
+    padding: 5px 9px;
+    font-size: 12px;
+    color: var(--coco-cream);
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    cursor: pointer;
+    transition: var(--transition);
+    -webkit-appearance: none;
+  }
+  .inspector-select:focus { border-color: rgba(232,130,26,0.5); }
+
+  /* ─── FILTER GRID ─── */
+  .filter-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+
+  .filter-thumb {
+    aspect-ratio: 1;
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    border: 1.5px solid transparent;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 4px; cursor: pointer; transition: var(--transition);
+    font-size: 18px;
+  }
+  .filter-thumb:hover { background: var(--coco-glass); border-color: var(--coco-border2); }
+  .filter-thumb.active { border-color: var(--coco-accent); background: rgba(232,130,26,0.1); }
+  .filter-thumb span { font-size: 9.5px; font-weight: 500; color: rgba(200,169,126,0.7); }
+  .filter-thumb.active span { color: var(--coco-accent); }
+
+  /* ─── TRANSITION GRID ─── */
+  .transition-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+  .transition-card {
+    background: rgba(255,255,255,0.04);
+    border: 0.5px solid var(--coco-border);
+    border-radius: 8px;
+    padding: 8px;
+    cursor: pointer; transition: var(--transition);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .transition-card:hover { background: var(--coco-glass); border-color: var(--coco-border2); }
+  .transition-card.active { border-color: var(--coco-accent); background: rgba(232,130,26,0.08); }
+  .transition-icon { font-size: 16px; }
+  .transition-name { font-size: 11px; font-weight: 500; color: rgba(200,169,126,0.8); }
+
+  /* ─── TEXT TOOLS ─── */
+  .text-style-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+
+  .text-style-btn {
+    padding: 6px 4px;
+    background: var(--coco-glass);
+    border: 0.5px solid var(--coco-border);
+    border-radius: 6px;
+    font-size: 12px; font-weight: 500;
+    color: rgba(200,169,126,0.7);
+    cursor: pointer; transition: var(--transition);
+    text-align: center;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .text-style-btn:hover { color: var(--coco-cream); background: var(--coco-glass2); }
+  .text-style-btn.active { background: rgba(232,130,26,0.18); color: var(--coco-accent); border-color: rgba(232,130,26,0.3); }
+
+  /* ─── EXPORT PANEL ─── */
+  .export-section {
+    margin: 12px;
+    background: linear-gradient(135deg, rgba(61,43,31,0.6), rgba(28,18,8,0.8));
+    border: 0.5px solid rgba(200,169,126,0.25);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+  }
+
+  .export-section-title {
+    font-size: 13px; font-weight: 600;
+    color: var(--coco-cream); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .export-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 8px; }
+  .export-label { font-size: 12px; color: rgba(200,169,126,0.65); }
+
+  .export-badge {
+    font-size: 10.5px; font-weight: 600;
+    padding: 2px 8px; border-radius: var(--radius-pill);
+    background: rgba(232,130,26,0.2);
+    color: var(--coco-accent);
+    border: 0.5px solid rgba(232,130,26,0.3);
+  }
+
+  .btn-export {
+    width: 100%; padding: 11px;
+    background: linear-gradient(135deg, #E8821A 0%, #D4A843 100%);
+    border: none; border-radius: var(--radius-md);
+    color: var(--coco-dark);
+    font-size: 13.5px; font-weight: 700;
+    cursor: pointer; transition: var(--transition);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-top: 12px;
+    font-family: 'DM Sans', sans-serif;
+    box-shadow: 0 4px 20px rgba(232,130,26,0.4);
+    letter-spacing: -0.2px;
+  }
+  .btn-export:hover { filter: brightness(1.1); box-shadow: 0 6px 28px rgba(232,130,26,0.55); transform: translateY(-1px); }
+  .btn-export:active { transform: scale(0.98) translateY(0); }
+
+  .btn-export-ghost {
+    width: 100%; padding: 9px;
+    background: transparent;
+    border: 0.5px solid rgba(232,130,26,0.4);
+    border-radius: var(--radius-md);
+    color: var(--coco-accent);
+    font-size: 12.5px; font-weight: 600;
+    cursor: pointer; transition: var(--transition);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-top: 7px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-export-ghost:hover { background: rgba(232,130,26,0.1); }
+
+  /* ─── EFFECTS PANEL ─── */
+  .effects-strip {
+    display: flex; gap: 5px; flex-wrap: wrap;
+    padding: 0 12px 10px;
+  }
+
+  .effect-chip {
+    padding: 4px 10px;
+    background: var(--coco-glass);
+    border: 0.5px solid var(--coco-border);
+    border-radius: var(--radius-pill);
+    font-size: 11px; font-weight: 500;
+    color: rgba(200,169,126,0.7);
+    cursor: pointer; transition: var(--transition);
+    white-space: nowrap;
+  }
+  .effect-chip:hover { background: var(--coco-glass2); color: var(--coco-cream); }
+  .effect-chip.on { background: rgba(232,130,26,0.18); color: var(--coco-accent); border-color: rgba(232,130,26,0.35); }
+
+  /* ─── SPEED DIAL ─── */
+  .speed-btns { display: flex; gap: 5px; }
+  .speed-btn {
+    flex: 1; padding: 5px 4px;
+    background: var(--coco-glass);
+    border: 0.5px solid var(--coco-border);
+    border-radius: 6px;
+    font-size: 11px; font-weight: 600;
+    color: rgba(200,169,126,0.65);
+    cursor: pointer; transition: var(--transition);
+    text-align: center;
+  }
+  .speed-btn:hover { color: var(--coco-cream); }
+  .speed-btn.active { background: rgba(232,130,26,0.2); color: var(--coco-accent); border-color: rgba(232,130,26,0.35); }
+
+  /* ─── NOTIFICATION TOAST ─── */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: rgba(30,20,10,0.96);
+    border: 0.5px solid rgba(232,130,26,0.35);
+    border-radius: var(--radius-md);
+    padding: 10px 18px;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 500;
+    color: var(--coco-cream);
+    z-index: 9999;
+    backdrop-filter: blur(16px);
+    box-shadow: var(--shadow-card);
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.4s;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  .toast-icon { font-size: 16px; }
+
+  /* ─── PROGRESS ─── */
+  .progress-bar-wrap {
+    height: 4px; border-radius: 2px;
+    background: rgba(200,169,126,0.12);
+    overflow: hidden; margin-top: 8px;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #E8821A, #D4A843);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.3s;
+  }
+
+  /* ─── WAVEFORM VIS ─── */
+  .waveform-canvas-wrap {
+    margin: 8px 12px;
+    background: rgba(0,0,0,0.25);
+    border-radius: 8px;
+    border: 0.5px solid var(--coco-border);
+    overflow: hidden;
+    height: 50px;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  #waveformCanvas { display: block; width: 100%; height: 50px; }
+
+  /* ─── HISTOGRAM ─── */
+  #histCanvas { display: block; width: 100%; height: 48px; }
+  .hist-wrap {
+    margin: 8px 12px 12px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    border: 0.5px solid var(--coco-border);
+    overflow: hidden;
+    height: 48px;
+    flex-shrink: 0;
+  }
+
+  /* ─── DIVIDER ─── */
+  .divider { height: 0.5px; background: var(--coco-border); margin: 0; }
+
+  /* ─── THUMBNAIL STRIP ─── */
+  .thumb-strip {
+    display: flex; gap: 5px;
+    overflow-x: auto; padding-bottom: 6px;
+  }
+  .thumb-strip::-webkit-scrollbar { height: 3px; }
+
+  .thumb-item {
+    width: 60px; height: 38px; flex-shrink: 0;
+    background: rgba(255,255,255,0.05);
+    border-radius: 5px; border: 0.5px solid var(--coco-border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; cursor: pointer; transition: var(--transition);
+    position: relative; overflow: hidden;
+  }
+  .thumb-item:hover { border-color: var(--coco-border2); }
+  .thumb-item.active { border-color: var(--coco-accent); box-shadow: 0 0 0 1px rgba(232,130,26,0.3); }
+
+  /* ─── STICKER GRID ─── */
+  .sticker-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 5px; }
+
+  .sticker-btn {
+    aspect-ratio: 1;
+    background: var(--coco-glass);
+    border: 0.5px solid var(--coco-border);
+    border-radius: 8px;
+    font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: var(--transition);
+  }
+  .sticker-btn:hover { background: var(--coco-glass2); transform: scale(1.1); }
+
+  /* ─── AUDIO VIZ ─── */
+  .audio-meter {
+    display: flex; align-items: flex-end; gap: 2px; height: 36px;
+    padding: 0 12px;
+  }
+  .audio-bar {
+    flex: 1;
+    background: linear-gradient(to top, #2D5A27, #4CAF50, #D4A843);
+    border-radius: 2px 2px 0 0;
+    min-height: 2px;
+    animation: audioPulse 0.15s ease infinite alternate;
+  }
+
+  @keyframes audioPulse {
+    from { opacity: 0.7; }
+    to { opacity: 1; }
+  }
+
+  /* ─── LOADING OVERLAY ─── */
+  .loading-overlay {
+    position: fixed; inset: 0; z-index: 9998;
+    background: var(--coco-dark);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 20px;
+    transition: opacity 0.5s;
+  }
+
+  .loading-logo { font-size: 56px; animation: spin 2s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 26px; font-weight: 600;
+    color: var(--coco-cream); letter-spacing: -0.5px;
+  }
+
+  .loading-sub { font-size: 13px; color: rgba(200,169,126,0.55); }
+
+  .loading-bar-outer {
+    width: 200px; height: 3px;
+    background: rgba(200,169,126,0.12);
+    border-radius: 2px; overflow: hidden;
+  }
+  .loading-bar-inner {
+    height: 100%;
+    background: linear-gradient(90deg, #E8821A, #D4A843);
+    border-radius: 2px;
+    animation: loadAnim 1.8s ease forwards;
+  }
+  @keyframes loadAnim { from { width: 0%; } to { width: 100%; } }
+
+  /* ─── TABS INSIDE RIGHT PANEL ─── */
+  .rpanel-tabs {
+    display: flex; gap: 2px; padding: 10px 10px 0;
+    flex-shrink: 0;
+  }
+  .rpanel-tab {
+    flex: 1; padding: 6px 4px;
+    background: none; border: 0.5px solid transparent;
+    border-radius: 6px; font-size: 10.5px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    color: rgba(200,169,126,0.45); cursor: pointer; transition: var(--transition);
+    text-align: center;
+  }
+  .rpanel-tab:hover { color: rgba(200,169,126,0.8); }
+  .rpanel-tab.active { color: var(--coco-accent); background: rgba(232,130,26,0.12); border-color: rgba(232,130,26,0.25); }
+
+  .rpanel-section { display: none; }
+  .rpanel-section.visible { display: block; }
+
+  /* ─── LEFT PANEL TABS ─── */
+  .lpanel-tabs {
+    display: flex; gap: 2px; padding: 8px 10px 0; flex-shrink: 0;
+  }
+  .lpanel-tab {
+    flex: 1; padding: 5px 4px;
+    background: none; border: 0.5px solid transparent;
+    border-radius: 6px; font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    color: rgba(200,169,126,0.45); cursor: pointer; transition: var(--transition);
+    text-align: center;
+  }
+  .lpanel-tab:hover { color: rgba(200,169,126,0.8); }
+  .lpanel-tab.active { color: var(--coco-accent); background: rgba(232,130,26,0.12); border-color: rgba(232,130,26,0.25); }
+
+  .lpanel-section { display: none; padding: 0 0 8px; }
+  .lpanel-section.visible { display: block; }
+
+  /* ─── MISC ─── */
+  .spacer { flex: 1; }
+
+  .text-xs { font-size: 11px; }
+  .text-muted { color: rgba(200,169,126,0.5); }
+
+  .file-input-hidden { display: none; }
+
+  .indicator-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--coco-green-light);
+    box-shadow: 0 0 6px rgba(76,175,80,0.6);
+  }
+  .indicator-dot.rec { background: #E53935; box-shadow: 0 0 6px rgba(229,57,53,0.6); animation: blink 1s ease infinite; }
+
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  .kbd {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: rgba(200,169,126,0.1);
+    border: 0.5px solid var(--coco-border2);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 10px; font-family: 'Space Mono', monospace;
+    color: rgba(200,169,126,0.6);
+  }
+
+  /* ─── RESPONSIVE COLLAPSE ─── */
+  @media (max-width: 900px) {
+    .app-layout { grid-template-columns: 200px 1fr 0; }
+    .panel-right { display: none; }
+  }
+  @media (max-width: 640px) {
+    .app-layout { grid-template-columns: 0 1fr 0; }
+    .panel { display: none; }
+    .topbar-center { display: none; }
+  }
+</style>
 </head>
 <body>
 
-    <div class="title-bar">
-        <div class="logo">COCONUT<span>EDIT</span></div>
-        <div id="user-info" style="display:none; align-items:center; gap:12px;">
-            <div id="pfp" style="width:34px;height:34px;border-radius:50%;background:var(--accent);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;"></div>
-            <div id="user-email" style="font-size:14px;"></div>
-            <button onclick="logout()" style="margin-left:20px; background:transparent; border:1px solid #ccc; padding:6px 14px;">Log Out</button>
-        </div>
-        <button onclick="showLoginModal()" id="login-btn" class="btn-primary">Sign Up Free</button>
+<!-- LOADING SCREEN -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-logo">🥥</div>
+  <div class="loading-title">CocoEdit</div>
+  <div class="loading-sub">Preparing your studio…</div>
+  <div class="loading-bar-outer"><div class="loading-bar-inner"></div></div>
+</div>
+
+<!-- TOAST NOTIFICATION -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toastIcon">🥥</span>
+  <span id="toastMsg">Ready</span>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="logo-icon">🥥</div>
+    CocoEdit
+  </div>
+
+  <div class="topbar-center">
+    <button class="topbar-tab active" onclick="setTopTab(this,'edit')">Edit</button>
+    <button class="topbar-tab" onclick="setTopTab(this,'color')">Color</button>
+    <button class="topbar-tab" onclick="setTopTab(this,'effects')">Effects</button>
+    <button class="topbar-tab" onclick="setTopTab(this,'audio')">Audio</button>
+    <button class="topbar-tab" onclick="setTopTab(this,'captions')">Captions</button>
+    <button class="topbar-tab" onclick="setTopTab(this,'motion')">Motion</button>
+    <button class="topbar-tab" onclick="setTopTab(this,'share')">Share</button>
+  </div>
+
+  <div class="topbar-right">
+    <div class="indicator-dot" id="statusDot"></div>
+    <button class="btn btn-ghost" onclick="showToast('🔄','Auto-saving…')">⌘S Save</button>
+    <button class="btn btn-ghost" onclick="undoAction()">↩ Undo <span class="kbd">Z</span></button>
+    <button class="btn btn-ghost" onclick="redoAction()">↪ Redo <span class="kbd">⇧Z</span></button>
+    <button class="btn btn-ghost" onclick="showToast('📤','Sharing project…')">Share</button>
+    <button class="btn btn-primary" onclick="triggerExport()">⬇ Export</button>
+  </div>
+</div>
+
+<!-- MAIN APP LAYOUT -->
+<div class="app-layout">
+
+  <!-- ═══════════════════════════════════════ LEFT PANEL ═══ -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title">Media Library</span>
+      <button class="btn btn-icon" onclick="showToast('📁','Opening folder…')" title="Import folder">📂</button>
     </div>
 
-    <div class="main">
-        <!-- Sidebar - Useful Buttons -->
-        <div class="sidebar">
-            <h2 style="color:var(--brown);">Editing Tools</h2>
-
-            <input type="file" id="video-upload" accept="video/*" style="display:none" onchange="loadVideoFile(event)">
-            
-            <button onclick="document.getElementById('video-upload').click()" style="width:100%;justify-content:center;">
-                <i class="fa-solid fa-upload"></i> Import New Video
-            </button>
-
-            <button onclick="trimVideo()" style="width:100%;justify-content:center;background:#f0e6d2;">
-                <i class="fa-solid fa-scissors"></i> Trim / Cut Video
-            </button>
-
-            <button onclick="togglePlay()" id="play-btn" style="width:100%;justify-content:center;" class="btn-primary">
-                <i class="fa-solid fa-play"></i> <span id="play-text">Play</span>
-            </button>
-
-            <button onclick="resetAll()" style="width:100%;justify-content:center;">
-                <i class="fa-solid fa-rotate-right"></i> Reset Everything
-            </button>
-
-            <div style="margin-top:20px;">
-                <h3 style="color:var(--muted); margin-bottom:10px;">Quick Effects</h3>
-                <button onclick="applyEffect('bright')" style="width:100%;">☀️ Brighten</button>
-                <button onclick="applyEffect('dark')" style="width:100%;">🌑 Darken</button>
-                <button onclick="applyEffect('contrast')" style="width:100%;">◑ Boost Contrast</button>
-                <button onclick="applyEffect('gray')" style="width:100%;">◼ Grayscale</button>
-            </div>
-
-            <button onclick="exportVideo()" class="btn-primary" style="margin-top:auto;width:100%;padding:16px;">
-                <i class="fa-solid fa-download"></i> Export Video
-            </button>
-        </div>
-
-        <!-- Main Preview -->
-        <div class="preview-window">
-            <div class="preview-header">
-                Video Preview — Coconut Edit
-            </div>
-            <div class="video-area" id="video-area">
-                <div id="drop-zone" style="text-align:center; color:#888; cursor:pointer;" onclick="document.getElementById('video-upload').click()">
-                    <i class="fa-solid fa-film" style="font-size:80px; margin-bottom:20px; color:#c4a47b;"></i>
-                    <h3>Drop video here or click to import</h3>
-                </div>
-                <video id="player" style="display:none;" controls></video>
-            </div>
-
-            <div class="timeline">
-                <input type="range" id="seek-bar" min="0" value="0" step="0.1" style="width:100%;">
-                <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:13px;color:var(--muted);">
-                    <span id="current-time">0:00</span>
-                    <span id="duration">0:00</span>
-                </div>
-            </div>
-
-            <div class="status" id="status"></div>
-        </div>
+    <div class="media-search">
+      <span class="media-search-icon">🔍</span>
+      <input type="text" placeholder="Search clips, audio…" id="mediaSearch" oninput="filterMedia(this.value)">
     </div>
 
-    <!-- Login Modal -->
-    <div id="login-modal" style="position:fixed;inset:0;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:1000;">
-        <div style="background:white;padding:50px 45px;border-radius:24px;width:400px;text-align:center;">
-            <h2>Coconut Edit</h2>
-            <p style="margin:20px 0;color:var(--muted);">Sign up to save your projects</p>
-            <input type="email" id="email" placeholder="your@email.com" style="width:100%;padding:14px;margin:10px 0;border:1px solid #ddd;border-radius:12px;">
-            <button onclick="handleLogin()" class="btn-primary" style="width:100%;padding:14px;margin-top:15px;">Continue</button>
-        </div>
+    <div class="lpanel-tabs">
+      <button class="lpanel-tab active" onclick="setLTab(this,'media')">Media</button>
+      <button class="lpanel-tab" onclick="setLTab(this,'audio')">Audio</button>
+      <button class="lpanel-tab" onclick="setLTab(this,'stock')">Stock</button>
+      <button class="lpanel-tab" onclick="setLTab(this,'stickers')">Stickers</button>
     </div>
 
-    <script>
-        let video = null;
-        let currentURL = null;
-        let isPlaying = false;
-        let trimStart = 0;
-        let trimEnd = 0;
-        let savedProject = null;
+    <!-- MEDIA TAB -->
+    <div class="lpanel-section visible" id="ltab-media">
+      <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+        <div class="upload-zone-icon">📹</div>
+        <div class="upload-zone-text">Drop video files here</div>
+        <div class="upload-zone-sub">MP4, MOV, AVI, WebM</div>
+      </div>
+      <input type="file" class="file-input-hidden" id="fileInput" accept="video/*,image/*" onchange="handleFileImport(event)">
+      <button class="btn-upload-trigger" onclick="document.getElementById('fileInput').click()">+ Import Media</button>
 
-        // Load saved project
-        function loadSavedProject() {
-            savedProject = JSON.parse(localStorage.getItem('coconutProject'));
-            if (savedProject && savedProject.url) {
-                // In real app we would reload blob, but for demo we just alert
-                document.getElementById('status').textContent = "Last project loaded";
-            }
-        }
+      <div style="padding: 10px 12px 6px;">
+        <div class="panel-title" style="margin-bottom:8px;">Recent Clips</div>
+        <div class="media-grid" id="mediaGrid">
+          <div class="media-thumb" onclick="loadMediaClip('🌴','Palm Beach')">
+            🌴
+            <div class="media-thumb-label">Palm Beach.mp4</div>
+          </div>
+          <div class="media-thumb" onclick="loadMediaClip('🥥','Coconut Grove')">
+            🥥
+            <div class="media-thumb-label">CocoGrove.mp4</div>
+          </div>
+          <div class="media-thumb" onclick="loadMediaClip('🌊','Ocean Wave')">
+            🌊
+            <div class="media-thumb-label">Ocean.mp4</div>
+          </div>
+          <div class="media-thumb" onclick="loadMediaClip('🌅','Sunset Clip')">
+            🌅
+            <div class="media-thumb-label">Sunset.mp4</div>
+          </div>
+          <div class="media-thumb" onclick="loadMediaClip('🏖️','Beach Day')">
+            🏖️
+            <div class="media-thumb-label">BeachDay.mp4</div>
+          </div>
+          <div class="media-thumb" onclick="loadMediaClip('🌿','Nature B-Roll')">
+            🌿
+            <div class="media-thumb-label">NatureRoll.mp4</div>
+          </div>
+        </div>
+      </div>
 
-        function handleLogin() {
-            const email = document.getElementById('email').value.trim();
-            if (email) {
-                document.getElementById('login-modal').style.display = 'none';
-                document.getElementById('login-btn').style.display = 'none';
-                document.getElementById('user-info').style.display = 'flex';
-                document.getElementById('user-email').textContent = email;
-                document.getElementById('pfp').textContent = email[0].toUpperCase();
-            }
-        }
+      <div style="padding: 0 12px 8px;">
+        <div class="panel-title" style="margin-bottom:8px;">Thumbnail Preview</div>
+        <div class="thumb-strip" id="thumbStrip">
+          <div class="thumb-item active" onclick="selectThumb(this)">🌴</div>
+          <div class="thumb-item" onclick="selectThumb(this)">🥥</div>
+          <div class="thumb-item" onclick="selectThumb(this)">🌊</div>
+          <div class="thumb-item" onclick="selectThumb(this)">🌅</div>
+          <div class="thumb-item" onclick="selectThumb(this)">🏖️</div>
+          <div class="thumb-item" onclick="selectThumb(this)">🌿</div>
+          <div class="thumb-item" onclick="selectThumb(this)">🌙</div>
+          <div class="thumb-item" onclick="selectThumb(this)">✨</div>
+        </div>
+      </div>
+    </div>
 
-        function logout() {
-            if (confirm("Log out?")) location.reload();
-        }
+    <!-- AUDIO TAB -->
+    <div class="lpanel-section" id="ltab-audio">
+      <div style="padding:10px 12px 0;">
+        <div class="panel-title" style="margin-bottom:10px;">Audio Tracks</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div class="transition-card" onclick="addAudioTrack(this,'🥁 Tropical Drums')">
+            <span class="transition-icon">🥁</span>
+            <div><div class="transition-name">Tropical Drums</div><div class="text-xs text-muted">2:34 · 128 BPM</div></div>
+          </div>
+          <div class="transition-card" onclick="addAudioTrack(this,'🎸 Coco Strums')">
+            <span class="transition-icon">🎸</span>
+            <div><div class="transition-name">Coco Strums</div><div class="text-xs text-muted">3:12 · Acoustic</div></div>
+          </div>
+          <div class="transition-card" onclick="addAudioTrack(this,'🎵 Island Vibes')">
+            <span class="transition-icon">🎵</span>
+            <div><div class="transition-name">Island Vibes</div><div class="text-xs text-muted">4:01 · Chill</div></div>
+          </div>
+          <div class="transition-card" onclick="addAudioTrack(this,'🌊 Ocean Ambience')">
+            <span class="transition-icon">🌊</span>
+            <div><div class="transition-name">Ocean Ambience</div><div class="text-xs text-muted">Loopable · 60s</div></div>
+          </div>
+          <div class="transition-card" onclick="addAudioTrack(this,'🌴 Breeze Sounds')">
+            <span class="transition-icon">🌴</span>
+            <div><div class="transition-name">Breeze Sounds</div><div class="text-xs text-muted">Loopable · 30s</div></div>
+          </div>
+          <div class="transition-card" onclick="addAudioTrack(this,'✨ Sparkle FX')">
+            <span class="transition-icon">✨</span>
+            <div><div class="transition-name">Sparkle FX</div><div class="text-xs text-muted">SFX · 0:02</div></div>
+          </div>
+        </div>
 
-        function showLoginModal() {
-            document.getElementById('login-modal').style.display = 'flex';
-        }
+        <div class="panel-title" style="margin:12px 0 8px;">Audio Meter</div>
+        <div class="audio-meter" id="audioMeter">
+          <div class="audio-bar" style="height:60%;animation-delay:0s"></div>
+          <div class="audio-bar" style="height:80%;animation-delay:0.05s"></div>
+          <div class="audio-bar" style="height:45%;animation-delay:0.1s"></div>
+          <div class="audio-bar" style="height:90%;animation-delay:0.15s"></div>
+          <div class="audio-bar" style="height:70%;animation-delay:0.2s"></div>
+          <div class="audio-bar" style="height:55%;animation-delay:0.25s"></div>
+          <div class="audio-bar" style="height:85%;animation-delay:0.3s"></div>
+          <div class="audio-bar" style="height:40%;animation-delay:0.35s"></div>
+          <div class="audio-bar" style="height:75%;animation-delay:0.4s"></div>
+          <div class="audio-bar" style="height:65%;animation-delay:0.45s"></div>
+          <div class="audio-bar" style="height:95%;animation-delay:0.5s"></div>
+          <div class="audio-bar" style="height:30%;animation-delay:0.55s"></div>
+        </div>
 
-        function loadVideoFile(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            currentURL = URL.createObjectURL(file);
-            video = document.getElementById('player');
-            video.src = currentURL;
-            video.style.display = 'block';
-            document.getElementById('drop-zone').style.display = 'none';
+        <div class="waveform-canvas-wrap" style="margin:8px 0;">
+          <canvas id="waveformCanvas" width="236" height="50"></canvas>
+        </div>
+      </div>
+    </div>
 
-            video.onloadedmetadata = () => {
-                trimEnd = video.duration;
-                document.getElementById('duration').textContent = formatTime(video.duration);
-                updateSeekBar();
-            };
+    <!-- STOCK TAB -->
+    <div class="lpanel-section" id="ltab-stock">
+      <div style="padding:10px 12px 0;">
+        <div class="panel-title" style="margin-bottom:8px;">Stock Footage</div>
+        <div class="media-tabs" style="padding:0 0 8px;">
+          <button class="media-tab active">Video</button>
+          <button class="media-tab">Photos</button>
+          <button class="media-tab">GIFs</button>
+        </div>
+        <div class="media-grid">
+          <div class="media-thumb" onclick="showToast('📥','Adding stock clip…')">🌺<div class="media-thumb-label">Hibiscus</div></div>
+          <div class="media-thumb" onclick="showToast('📥','Adding stock clip…')">🌊<div class="media-thumb-label">Waves</div></div>
+          <div class="media-thumb" onclick="showToast('📥','Adding stock clip…')">🦜<div class="media-thumb-label">Parrot</div></div>
+          <div class="media-thumb" onclick="showToast('📥','Adding stock clip…')">🐚<div class="media-thumb-label">Shell</div></div>
+        </div>
+        <button class="btn-upload-trigger" style="margin-top:10px;" onclick="showToast('🔍','Searching stock library…')">🔍 Search Stock</button>
+      </div>
+    </div>
 
-            video.ontimeupdate = updateSeekBar;
-            saveProject();
-        }
+    <!-- STICKERS TAB -->
+    <div class="lpanel-section" id="ltab-stickers">
+      <div style="padding:10px 12px 0;">
+        <div class="panel-title" style="margin-bottom:10px;">Stickers & Overlays</div>
+        <div class="sticker-grid">
+          <div class="sticker-btn" onclick="addSticker(this,'🥥')">🥥</div>
+          <div class="sticker-btn" onclick="addSticker(this,'🌴')">🌴</div>
+          <div class="sticker-btn" onclick="addSticker(this,'🌊')">🌊</div>
+          <div class="sticker-btn" onclick="addSticker(this,'🌺')">🌺</div>
+          <div class="sticker-btn" onclick="addSticker(this,'☀️')">☀️</div>
+          <div class="sticker-btn" onclick="addSticker(this,'🦜')">🦜</div>
+          <div class="sticker-btn" onclick="addSticker(this,'🐚')">🐚</div>
+          <div class="sticker-btn" onclick="addSticker(this,'🌅')">🌅</div>
+          <div class="sticker-btn" onclick="addSticker(this,'⭐')">⭐</div>
+          <div class="sticker-btn" onclick="addSticker(this,'✨')">✨</div>
+          <div class="sticker-btn" onclick="addSticker(this,'🎵')">🎵</div>
+          <div class="sticker-btn" onclick="addSticker(this,'💫')">💫</div>
+          <div class="sticker-btn" onclick="addSticker(this,'🌿')">🌿</div>
+          <div class="sticker-btn" onclick="addSticker(this,'🔥')">🔥</div>
+          <div class="sticker-btn" onclick="addSticker(this,'💎')">💎</div>
+        </div>
+        <div class="panel-title" style="margin:12px 0 8px;">Text Overlays</div>
+        <div style="display:flex;flex-direction:column;gap:5px;">
+          <button class="tl-btn" onclick="addTextOverlay('Title')">🔤 Add Title</button>
+          <button class="tl-btn" onclick="addTextOverlay('Subtitle')">💬 Add Subtitle</button>
+          <button class="tl-btn" onclick="addTextOverlay('Lower Third')">📝 Lower Third</button>
+          <button class="tl-btn" onclick="addTextOverlay('Caption')">🏷️ Caption</button>
+          <button class="tl-btn" onclick="addTextOverlay('Callout')">📌 Callout</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        function formatTime(seconds) {
-            const min = Math.floor(seconds / 60);
-            const sec = Math.floor(seconds % 60);
-            return `${min}:${sec < 10 ? '0' : ''}${sec}`;
-        }
+  <!-- ═══════════════════════════════════════ CENTER ═══════ -->
+  <div class="center-area">
 
-        function updateSeekBar() {
-            const seek = document.getElementById('seek-bar');
-            if (video) {
-                seek.value = video.currentTime;
-                document.getElementById('current-time').textContent = formatTime(video.currentTime);
-            }
-        }
+    <!-- PREVIEW -->
+    <div class="preview-area">
+      <div class="preview-grain"></div>
 
-        function togglePlay() {
-            if (!video) return;
-            if (isPlaying) {
-                video.pause();
-                document.getElementById('play-text').innerHTML = '<i class="fa-solid fa-play"></i> Play';
-                document.getElementById('status').textContent = "Paused!";
-            } else {
-                video.play();
-                document.getElementById('play-text').innerHTML = '<i class="fa-solid fa-pause"></i> Pause';
-                document.getElementById('status').textContent = "Playing!";
-            }
-            isPlaying = !isPlaying;
-        }
+      <div style="position:absolute;top:14px;left:16px;display:flex;align-items:center;gap:8px;z-index:10;">
+        <div style="font-size:10.5px;font-weight:600;color:rgba(200,169,126,0.55);letter-spacing:0.05em;text-transform:uppercase;">Preview</div>
+        <div style="font-size:10.5px;color:rgba(200,169,126,0.4);" id="previewRes">1920×1080</div>
+        <div class="indicator-dot" id="previewDot"></div>
+      </div>
 
-        function trimVideo() {
-            if (!video) return alert("Load a video first!");
-            const start = prompt("Start time (seconds):", trimStart);
-            const end = prompt("End time (seconds):", trimEnd || video.duration);
-            if (start !== null && end !== null) {
-                trimStart = parseFloat(start);
-                trimEnd = parseFloat(end);
-                video.currentTime = trimStart;
-                document.getElementById('status').textContent = `Trimmed: ${trimStart}s to ${trimEnd}s`;
-                saveProject();
-            }
-        }
+      <div style="position:absolute;top:10px;right:12px;display:flex;gap:6px;z-index:10;">
+        <button class="btn btn-icon" title="Zoom in" onclick="showToast('🔍','Zoomed in')">＋</button>
+        <button class="btn btn-icon" title="Zoom out" onclick="showToast('🔍','Zoomed out')">－</button>
+        <button class="btn btn-icon" title="Fit to window" onclick="showToast('⬛','Fit to window')">⬛</button>
+        <button class="btn btn-icon" title="Fullscreen" onclick="toggleFullscreen()">⛶</button>
+        <button class="btn btn-icon" title="Split screen" onclick="showToast('⧉','Split screen enabled')">⧉</button>
+        <button class="btn btn-icon" title="Snapshot" onclick="showToast('📸','Snapshot saved!')">📸</button>
+      </div>
 
-        function applyEffect(type) {
-            if (!video) return;
-            if (type === 'bright') video.style.filter = 'brightness(1.4)';
-            else if (type === 'dark') video.style.filter = 'brightness(0.7)';
-            else if (type === 'contrast') video.style.filter = 'contrast(1.6)';
-            else if (type === 'gray') video.style.filter = 'grayscale(1)';
-            document.getElementById('status').textContent = type.toUpperCase() + " effect applied";
-        }
+      <div class="preview-frame" id="previewFrame" onclick="handlePreviewClick()">
+        <div class="preview-placeholder" id="previewPlaceholder">
+          <div class="preview-placeholder-icon">🥥</div>
+          <div class="preview-placeholder-text">CocoEdit Studio</div>
+          <div class="preview-placeholder-sub">Import a video or drag a clip to the timeline to start editing</div>
+        </div>
+        <video class="preview-video" id="previewVideo" controls></video>
+        <div class="preview-overlay">
+          <button class="preview-play-btn" id="playPauseBtn" onclick="event.stopPropagation(); togglePlay()">▶</button>
+        </div>
+      </div>
 
-        function resetAll() {
-            if (video) {
-                video.style.filter = 'none';
-                video.currentTime = 0;
-            }
-            document.getElementById('status').textContent = "All effects reset";
-        }
+      <!-- ACTIVE STICKER DISPLAY -->
+      <div id="stickerDisplay" style="position:absolute;bottom:70px;right:20px;font-size:32px;opacity:0;transition:opacity 0.4s;pointer-events:none;"></div>
+    </div>
 
-        function exportVideo() {
-            if (!currentURL) return alert("No video to export");
-            const a = document.createElement('a');
-            a.href = currentURL;
-            a.download = "coconut_edited_video.mp4";
-            a.click();
-            document.getElementById('status').textContent = "Video downloaded!";
-        }
+    <!-- TRANSPORT BAR -->
+    <div class="transport-bar">
+      <div class="transport-controls">
+        <button class="transport-btn" title="Skip to start" onclick="seekTo(0)">⏮</button>
+        <button class="transport-btn" title="Step back" onclick="stepBack()">⏪</button>
+        <button class="transport-btn play-pause" title="Play/Pause" onclick="togglePlay()">▶</button>
+        <button class="transport-btn" title="Step forward" onclick="stepForward()">⏩</button>
+        <button class="transport-btn" title="Skip to end" onclick="seekToEnd()">⏭</button>
+        <button class="transport-btn" title="Loop" id="loopBtn" onclick="toggleLoop()">🔁</button>
+        <button class="transport-btn" title="Record" id="recBtn" onclick="toggleRec()">⏺</button>
+      </div>
 
-        function saveProject() {
-            if (currentURL) {
-                localStorage.setItem('coconutProject', JSON.stringify({
-                    url: currentURL,
-                    trimStart: trimStart,
-                    trimEnd: trimEnd
-                }));
-            }
-        }
+      <div class="timecode" id="timecodeDisplay">00:00:00:00</div>
 
-        // Seek bar control
-        document.addEventListener('DOMContentLoaded', () => {
-            const seek = document.getElementById('seek-bar');
-            seek.addEventListener('input', () => {
-                if (video) video.currentTime = parseFloat(seek.value);
-            });
+      <div class="scrubber-wrap">
+        <div class="scrubber-track" id="scrubberTrack" onclick="handleScrubberClick(event)">
+          <div class="scrubber-fill" id="scrubberFill"></div>
+          <div class="scrubber-thumb" id="scrubberThumb"></div>
+        </div>
+      </div>
 
-            loadSavedProject();
-        });
-    </script>
+      <div class="timecode" id="durationDisplay">00:00:00:00</div>
+
+      <div class="volume-row">
+        <span class="vol-icon">🔇</span>
+        <input type="range" min="0" max="100" value="85" id="volumeSlider" style="width:80px;" oninput="setVolume(this.value)" title="Volume">
+        <span class="vol-icon">🔊</span>
+        <span style="font-size:11px;font-family:'Space Mono',monospace;color:var(--coco-accent2);min-width:28px;" id="volVal">85</span>
+      </div>
+
+      <button class="btn btn-ghost" onclick="showToast('✂️','Clip cut at playhead')">✂ Cut</button>
+      <button class="btn btn-ghost" onclick="showToast('🗑','Clip deleted')">🗑 Del</button>
+      <button class="btn btn-ghost" onclick="showToast('📋','Clip copied')">📋 Copy</button>
+      <button class="btn btn-ghost" onclick="showToast('⚡','Ripple delete applied')">⚡ Ripple</button>
+    </div>
+
+    <!-- TIMELINE -->
+    <div class="timeline-area">
+      <div class="timeline-header">
+        <div class="timeline-tools">
+          <button class="tl-btn active" id="toolSelect" onclick="setTool('select',this)">⬡ Select</button>
+          <button class="tl-btn" id="toolBlade" onclick="setTool('blade',this)">✂ Blade</button>
+          <button class="tl-btn" id="toolSlip" onclick="setTool('slip',this)">⟺ Slip</button>
+          <button class="tl-btn" id="toolSlide" onclick="setTool('slide',this)">↔ Slide</button>
+          <button class="tl-btn" id="toolRoll" onclick="setTool('roll',this)">↕ Roll</button>
+          <button class="tl-btn" id="toolRipple" onclick="setTool('ripple',this)">⚡ Ripple</button>
+          <button class="tl-btn" id="toolPen" onclick="setTool('pen',this)">✏ Pen</button>
+          <button class="tl-btn" id="toolZoom" onclick="setTool('zoom',this)">🔎 Zoom</button>
+        </div>
+        <div class="spacer"></div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <button class="tl-btn" onclick="showToast('➕','Track added')">+ Track</button>
+          <button class="tl-btn" onclick="showToast('🔗','Clips linked')">🔗 Link</button>
+          <button class="tl-btn" onclick="showToast('🔇','Audio muted')">🔇 Mute</button>
+          <button class="tl-btn" onclick="showToast('👁','Track hidden')">👁 Solo</button>
+          <span style="font-size:11px;color:rgba(200,169,126,0.4);margin-left:4px;">Zoom:</span>
+          <input type="range" min="1" max="10" value="4" style="width:60px;" oninput="setTimelineZoom(this.value)" title="Timeline zoom">
+        </div>
+      </div>
+
+      <div class="timeline-ruler" id="timelineRuler">
+        <canvas id="rulerCanvas" width="800" height="20"></canvas>
+      </div>
+
+      <div class="timeline-tracks">
+        <div class="track-row">
+          <div class="track-label">VID 1</div>
+          <div class="track-lane" onclick="showToast('✂️','Selected Video Track 1')">
+            <div class="track-clip clip-video">🌴 Palm Beach.mp4</div>
+          </div>
+        </div>
+        <div class="track-row">
+          <div class="track-label">VID 2</div>
+          <div class="track-lane" id="vid2lane" onclick="showToast('✂️','Selected Video Track 2')">
+            <div class="track-clip clip-video" style="left:30%;width:45%">🌊 Ocean.mp4</div>
+          </div>
+        </div>
+        <div class="track-row">
+          <div class="track-label">AUDIO 1</div>
+          <div class="track-lane" onclick="showToast('🎵','Selected Audio Track 1')">
+            <div class="track-clip clip-audio">🥁 Tropical Drums.mp3</div>
+          </div>
+        </div>
+        <div class="track-row">
+          <div class="track-label">MUSIC</div>
+          <div class="track-lane" onclick="showToast('🎵','Selected Music Track')">
+            <div class="track-clip clip-music">🎵 Island Vibes.mp3</div>
+          </div>
+        </div>
+        <div class="track-row" id="textTrackRow">
+          <div class="track-label">TEXT</div>
+          <div class="track-lane" onclick="showToast('📝','Selected Text Track')">
+            <div class="track-clip clip-text">✍ Intro Title</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ RIGHT PANEL ═══ -->
+  <div class="panel panel-right">
+    <div class="panel-header">
+      <span class="panel-title">Inspector</span>
+      <button class="btn btn-icon" onclick="showToast('🔄','Inspector reset')">↺</button>
+    </div>
+
+    <div class="rpanel-tabs">
+      <button class="rpanel-tab active" onclick="setRTab(this,'transform')">Transform</button>
+      <button class="rpanel-tab" onclick="setRTab(this,'color')">Color</button>
+      <button class="rpanel-tab" onclick="setRTab(this,'effects')">FX</button>
+      <button class="rpanel-tab" onclick="setRTab(this,'audio')">Audio</button>
+      <button class="rpanel-tab" onclick="setRTab(this,'export')">Export</button>
+    </div>
+
+    <!-- TRANSFORM TAB -->
+    <div class="rpanel-section visible" id="rtab-transform">
+
+      <!-- VIDEO SETTINGS -->
+      <div class="inspector-section">
+        <div class="inspector-section-title">
+          Transform
+          <button class="tl-btn" onclick="resetTransform()">Reset</button>
+        </div>
+
+        <div class="inspector-row">
+          <span class="inspector-label">Position X</span>
+          <input class="inspector-input" type="number" value="0" style="max-width:70px;" onchange="showToast('↔','Position updated')">
+          <input class="inspector-input" type="number" value="0" style="max-width:70px;" onchange="showToast('↕','Position updated')">
+        </div>
+
+        <div class="inspector-row">
+          <span class="inspector-label">Scale</span>
+          <input class="inspector-input" type="number" value="100" style="max-width:70px;" onchange="showToast('📐','Scale updated')">
+          <span class="inspector-label" style="text-align:center;min-width:auto;">%</span>
+          <button class="btn btn-icon" style="font-size:11px;" title="Lock aspect ratio" onclick="showToast('🔒','Aspect ratio locked')">🔒</button>
+        </div>
+
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Rotation</span>
+            <span class="inspector-slider-val" id="rotationVal">0°</span>
+          </div>
+          <input type="range" class="full-range" min="-180" max="180" value="0" id="rotationSlider" oninput="document.getElementById('rotationVal').textContent=this.value+'°';showToast('🔄','Rotation: '+this.value+'°')">
+        </div>
+
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Opacity</span>
+            <span class="inspector-slider-val" id="opacityVal">100%</span>
+          </div>
+          <input type="range" class="full-range" min="0" max="100" value="100" id="opacitySlider" oninput="document.getElementById('opacityVal').textContent=this.value+'%;applyOpacity(this.value)">
+        </div>
+
+        <div class="inspector-row">
+          <span class="inspector-label">Anchor</span>
+          <select class="inspector-select">
+            <option>Center</option>
+            <option>Top Left</option>
+            <option>Top Right</option>
+            <option>Bottom Left</option>
+            <option>Bottom Right</option>
+          </select>
+        </div>
+
+        <div class="toggle-wrap">
+          <label class="toggle">
+            <input type="checkbox" checked onchange="showToast('🔗','Aspect lock toggled')">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+          <span class="toggle-label">Lock aspect ratio</span>
+        </div>
+
+        <div class="toggle-wrap">
+          <label class="toggle">
+            <input type="checkbox" onchange="showToast('🔄','Motion blur toggled')">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+          <span class="toggle-label">Motion blur</span>
+        </div>
+      </div>
+
+      <!-- CROP -->
+      <div class="inspector-section">
+        <div class="inspector-section-title">
+          Crop & Mask
+          <button class="tl-btn" onclick="showToast('✂️','Crop reset')">Reset</button>
+        </div>
+
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Crop Left</span>
+            <span class="inspector-slider-val" id="cropLVal">0</span>
+          </div>
+          <input type="range" class="full-range" min="0" max="50" value="0" oninput="document.getElementById('cropLVal').textContent=this.value">
+        </div>
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Crop Right</span>
+            <span class="inspector-slider-val" id="cropRVal">0</span>
+          </div>
+          <input type="range" class="full-range" min="0" max="50" value="0" oninput="document.getElementById('cropRVal').textContent=this.value">
+        </div>
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Crop Top</span>
+            <span class="inspector-slider-val" id="cropTVal">0</span>
+          </div>
+          <input type="range" class="full-range" min="0" max="50" value="0" oninput="document.getElementById('cropTVal').textContent=this.value">
+        </div>
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Crop Bottom</span>
+            <span class="inspector-slider-val" id="cropBVal">0</span>
+          </div>
+          <input type="range" class="full-range" min="0" max="50" value="0" oninput="document.getElementById('cropBVal').textContent=this.value">
+        </div>
+
+        <div class="inspector-row">
+          <span class="inspector-label">Mask Shape</span>
+          <select class="inspector-select" onchange="showToast('🎭','Mask applied')">
+            <option>None</option>
+            <option>Rectangle</option>
+            <option>Circle</option>
+            <option>Ellipse</option>
+            <option>Custom Path</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- SPEED -->
+      <div class="inspector-section">
+        <div class="inspector-section-title">Speed & Time</div>
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Speed</span>
+            <span class="inspector-slider-val" id="speedVal">1.0×</span>
+          </div>
+          <input type="range" class="full-range" min="0.1" max="8" step="0.1" value="1" id="speedSlider" oninput="document.getElementById('speedVal').textContent=parseFloat(this.value).toFixed(1)+'×';setPlaybackSpeed(this.value)">
+        </div>
+        <div class="speed-btns">
+          <button class="speed-btn" onclick="setSpeed(0.25)">0.25×</button>
+          <button class="speed-btn" onclick="setSpeed(0.5)">0.5×</button>
+          <button class="speed-btn active" onclick="setSpeed(1)">1×</button>
+          <button class="speed-btn" onclick="setSpeed(2)">2×</button>
+          <button class="speed-btn" onclick="setSpeed(4)">4×</button>
+          <button class="speed-btn" onclick="setSpeed(8)">8×</button>
+        </div>
+        <div class="toggle-wrap" style="margin-top:10px;">
+          <label class="toggle">
+            <input type="checkbox" onchange="showToast('🔄','Reverse toggled')">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+          <span class="toggle-label">Reverse clip</span>
+        </div>
+        <div class="toggle-wrap">
+          <label class="toggle">
+            <input type="checkbox" onchange="showToast('🔊','Pitch lock toggled')">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+          <span class="toggle-label">Pitch-lock audio</span>
+        </div>
+      </div>
+
+      <!-- TEXT -->
+      <div class="inspector-section">
+        <div class="inspector-section-title">Text & Captions</div>
+        <div class="inspector-row" style="margin-bottom:8px;">
+          <input class="inspector-input" type="text" value="Your text here" style="text-align:left;flex:1;" placeholder="Enter text…" oninput="showToast('✍','Text updated')">
+        </div>
+        <div class="inspector-row">
+          <span class="inspector-label">Font</span>
+          <select class="inspector-select" onchange="showToast('🔤','Font updated')">
+            <option>DM Sans</option>
+            <option>Space Mono</option>
+            <option>Georgia</option>
+            <option>Impact</option>
+            <option>Helvetica</option>
+            <option>Futura</option>
+            <option>Garamond</option>
+          </select>
+        </div>
+        <div class="inspector-row">
+          <span class="inspector-label">Size</span>
+          <input class="inspector-input" type="number" value="36" style="max-width:60px;" onchange="showToast('📏','Font size updated')">
+          <span class="inspector-label">Weight</span>
+          <select class="inspector-select" onchange="showToast('💪','Font weight updated')">
+            <option>300</option>
+            <option>400</option>
+            <option selected>500</option>
+            <option>600</option>
+            <option>700</option>
+          </select>
+        </div>
+        <div class="text-style-grid" style="margin-bottom:10px;">
+          <button class="text-style-btn" onclick="toggleTextStyle(this,'bold')"><b>B</b></button>
+          <button class="text-style-btn" onclick="toggleTextStyle(this,'italic')"><i>I</i></button>
+          <button class="text-style-btn" onclick="toggleTextStyle(this,'underline')"><u>U</u></button>
+          <button class="text-style-btn" onclick="toggleTextStyle(this,'strikethrough')"><s>S</s></button>
+          <button class="text-style-btn" onclick="showToast('◀','Left align')">◀</button>
+          <button class="text-style-btn active" onclick="showToast('▶◀','Center align')">≡</button>
+          <button class="text-style-btn" onclick="showToast('▶','Right align')">▶</button>
+          <button class="text-style-btn" onclick="showToast('☰','Justify')">☰</button>
+        </div>
+        <div class="inspector-row">
+          <span class="inspector-label">Text Color</span>
+          <div class="color-swatches">
+            <div class="color-swatch selected" style="background:#FFFDF7;" onclick="selectSwatch(this,'#FFFDF7')"></div>
+            <div class="color-swatch" style="background:#E8821A;" onclick="selectSwatch(this,'#E8821A')"></div>
+            <div class="color-swatch" style="background:#D4A843;" onclick="selectSwatch(this,'#D4A843')"></div>
+            <div class="color-swatch" style="background:#4CAF50;" onclick="selectSwatch(this,'#4CAF50')"></div>
+            <div class="color-swatch" style="background:#378ADD;" onclick="selectSwatch(this,'#378ADD')"></div>
+            <div class="color-swatch" style="background:#1C1208;" onclick="selectSwatch(this,'#1C1208')"></div>
+            <div class="color-swatch" style="background:linear-gradient(135deg,#E8821A,#D4A843);" onclick="showToast('🌈','Gradient text applied')"></div>
+          </div>
+        </div>
+        <div class="inspector-row">
+          <span class="inspector-label">Animation</span>
+          <select class="inspector-select" onchange="showToast('✨','Text animation set')">
+            <option>None</option>
+            <option>Fade In</option>
+            <option>Slide Up</option>
+            <option>Slide Left</option>
+            <option>Typewriter</option>
+            <option>Bounce</option>
+            <option>Glitch</option>
+            <option>Zoom In</option>
+          </select>
+        </div>
+      </div>
+
+    </div><!-- /transform tab -->
+
+    <!-- COLOR TAB -->
+    <div class="rpanel-section" id="rtab-color">
+
+      <div class="inspector-section">
+        <div class="inspector-section-title">Color Grading</div>
+
+        <div style="padding:0 0 10px;">
+          <div class="panel-title" style="margin-bottom:8px;">LUT Presets</div>
+          <div class="filter-grid">
+            <div class="filter-thumb active" onclick="applyLUT(this,'None')">📷<span>Original</span></div>
+            <div class="filter-thumb" onclick="applyLUT(this,'Coco')">🥥<span>Coco</span></div>
+            <div class="filter-thumb" onclick="applyLUT(this,'Warm')">🌅<span>Warm</span></div>
+            <div class="filter-thumb" onclick="applyLUT(this,'Cool')">🧊<span>Cool</span></div>
+            <div class="filter-thumb" onclick="applyLUT(this,'B&W')">⬛<span>B&W</span></div>
+            <div class="filter-thumb" onclick="applyLUT(this,'Sepia')">🪵<span>Sepia</span></div>
+            <div class="filter-thumb" onclick="applyLUT(this,'Vivid')">🌈<span>Vivid</span></div>
+            <div class="filter-thumb" onclick="applyLUT(this,'Fade')">🌫<span>Fade</span></div>
+            <div class="filter-thumb" onclick="applyLUT(this,'Matte')">🎞<span>Matte</span></div>
+          </div>
+        </div>
+
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Exposure</span>
+            <span class="inspector-slider-val" id="exposureVal">0</span>
+          </div>
+          <input type="range" class="full-range" min="-5" max="5" step="0.1" value="0" oninput="document.getElementById('exposureVal').textContent=parseFloat(this.value).toFixed(1)">
+        </div>
+
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Brightness</span>
+            <span class="inspector-slider-val" id="brightnessVal">100</span>
+          </div>
+          <input type="range" class="full-range" min="0" max="200" value="100" id="brightnessSlider" oninput="document.getElementById('brightnessVal').textContent=this.value;applyFilters()">
+        </div>
+
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Contrast</span>
+            <span class="inspector-slider-val" id="contrastVal">100</span>
+          </div>
+          <input type="range" class="full-range" min="0" max="200" value="100" id="contrastSlider" oninput="document.getElementById('contrastVal').textContent=this.value;applyFilters()">
+        </div>
+
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Saturation</span>
+            <span class="inspector-slider-val" id="saturationVal">100</span>
+          </div>
+          <input type="range" class="full-range" min="0" max="300" value="100" id="saturationSlider" oninput="document.getElementById('saturationVal').textContent=this.value;applyFilters()">
+        </div>
+
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Warmth</span>
+            <span class="inspector-slider-val" id="warmthVal">0</span>
+          </div>
+          <input type="range" class="full-range" min="-100" max="100" value="0" oninput="document.getElementById('warmthVal').textContent=this.value">
+        </div>
+
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Tint</span>
+            <span class="inspector-slider-val" id="tintVal">0</span>
+          </div>
+          <input type="range" class="full-range" min="-100" max="100" value="0" oninput="document.getElementById('tintVal').textContent=this.value">
+        </div>
+
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Highlights</span>
+            <span class="inspector-slider-val" id="highlightsVal">0</span>
+          </div>
+          <input type="range" class="full-range" min="-100" max="100" value="0" oninput="document.getElementById('highlightsVal').textContent=this.value">
+        </div>
+
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Shadows</span>
+            <span class="inspector-slider-val" id="shadowsVal">0</span>
+          </div>
+          <input type="range" class="full-range" min="-100" max="100" value="0" oninput="document.getElementById('shadowsVal').textContent=this.value">
+        </div>
+
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Sharpness</span>
+            <span class="inspector-slider-val" id="sharpnessVal">0</span>
+          </div>
+          <input type="range" class="full-range" min="0" max="100" value="0" oninput="document.getElementById('sharpnessVal').textContent=this.value">
+        </div>
+
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Noise Reduction</span>
+            <span class="inspector-slider-val" id="noiseVal">0</span>
+          </div>
+          <input type="range" class="full-range" min="0" max="100" value="0" oninput="document.getElementById('noiseVal').textContent=this.value">
+        </div>
+
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Vignette</span>
+            <span class="inspector-slider-val" id="vignetteVal">0</span>
+          </div>
+          <input type="range" class="full-range" min="0" max="100" value="0" oninput="document.getElementById('vignetteVal').textContent=this.value">
+        </div>
+
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Film Grain</span>
+            <span class="inspector-slider-val" id="grainVal">0</span>
+          </div>
+          <input type="range" class="full-range" min="0" max="100" value="0" oninput="document.getElementById('grainVal').textContent=this.value">
+        </div>
+
+        <div class="panel-title" style="margin-bottom:6px;margin-top:4px;">Histogram</div>
+        <div class="hist-wrap"><canvas id="histCanvas" width="252" height="48"></canvas></div>
+
+        <button class="btn-export-ghost" style="margin-top:6px;" onclick="showToast('🎨','Color grade copied')">Copy Color Grade</button>
+        <button class="btn-export-ghost" onclick="showToast('📋','Color grade pasted')">Paste Color Grade</button>
+      </div>
+    </div><!-- /color tab -->
+
+    <!-- EFFECTS TAB -->
+    <div class="rpanel-section" id="rtab-effects">
+
+      <div class="inspector-section">
+        <div class="inspector-section-title">Video Effects</div>
+
+        <div class="panel-title" style="margin-bottom:8px;">Quick Effects</div>
+        <div class="effects-strip">
+          <button class="effect-chip" onclick="toggleEffect(this)">Blur</button>
+          <button class="effect-chip" onclick="toggleEffect(this)">Sharpen</button>
+          <button class="effect-chip" onclick="toggleEffect(this)">Glow</button>
+          <button class="effect-chip" onclick="toggleEffect(this)">Glitch</button>
+          <button class="effect-chip" onclick="toggleEffect(this)">VHS</button>
+          <button class="effect-chip" onclick="toggleEffect(this)">Pixelate</button>
+          <button class="effect-chip" onclick="toggleEffect(this)">Mirror</button>
+          <button class="effect-chip" onclick="toggleEffect(this)">Kaleid</button>
+          <button class="effect-chip" onclick="toggleEffect(this)">Chroma</button>
+          <button class="effect-chip" onclick="toggleEffect(this)">Fisheye</button>
+          <button class="effect-chip" onclick="toggleEffect(this)">Zoom Blur</button>
+          <button class="effect-chip" onclick="toggleEffect(this)">Grain</button>
+          <button class="effect-chip" onclick="toggleEffect(this)">Neon</button>
+          <button class="effect-chip" onclick="toggleEffect(this)">Coco Haze</button>
+        </div>
+
+        <div class="inspector-slider-row" style="margin-top:10px;">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Blur Amount</span>
+            <span class="inspector-slider-val" id="blurVal">0px</span>
+          </div>
+          <input type="range" class="full-range" min="0" max="20" value="0" id="blurSlider" oninput="document.getElementById('blurVal').textContent=this.value+'px';applyBlur(this.value)">
+        </div>
+
+        <div class="panel-title" style="margin-bottom:8px;margin-top:4px;">Transitions</div>
+        <div class="transition-grid">
+          <div class="transition-card active" onclick="setTransition(this,'Dissolve')">
+            <span class="transition-icon">🌫</span><span class="transition-name">Dissolve</span>
+          </div>
+          <div class="transition-card" onclick="setTransition(this,'Wipe')">
+            <span class="transition-icon">➡</span><span class="transition-name">Wipe</span>
+          </div>
+          <div class="transition-card" onclick="setTransition(this,'Zoom')">
+            <span class="transition-icon">🔍</span><span class="transition-name">Zoom</span>
+          </div>
+          <div class="transition-card" onclick="setTransition(this,'Fade')">
+            <span class="transition-icon">⬛</span><span class="transition-name">Fade</span>
+          </div>
+          <div class="transition-card" onclick="setTransition(this,'Slide')">
+            <span class="transition-icon">↔</span><span class="transition-name">Slide</span>
+          </div>
+          <div class="transition-card" onclick="setTransition(this,'Spin')">
+            <span class="transition-icon">🔄</span><span class="transition-name">Spin</span>
+          </div>
+          <div class="transition-card" onclick="setTransition(this,'Coconut')">
+            <span class="transition-icon">🥥</span><span class="transition-name">Coconut</span>
+          </div>
+          <div class="transition-card" onclick="setTransition(this,'Ripple')">
+            <span class="transition-icon">🌊</span><span class="transition-name">Ripple</span>
+          </div>
+        </div>
+
+        <div class="inspector-slider-row" style="margin-top:10px;">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Duration</span>
+            <span class="inspector-slider-val" id="transDurVal">0.5s</span>
+          </div>
+          <input type="range" class="full-range" min="1" max="30" value="5" oninput="document.getElementById('transDurVal').textContent=(this.value/10).toFixed(1)+'s'">
+        </div>
+
+        <div class="panel-title" style="margin-bottom:8px;margin-top:4px;">Keyframes</div>
+        <div style="display:flex;gap:5px;">
+          <button class="tl-btn" onclick="showToast('💎','Keyframe added')">+ Add</button>
+          <button class="tl-btn" onclick="showToast('🗑','Keyframe removed')">✕ Remove</button>
+          <button class="tl-btn" onclick="showToast('🔄','Keyframes eased')">⟳ Ease</button>
+          <button class="tl-btn" onclick="showToast('📋','Keyframes copied')">📋 Copy</button>
+        </div>
+
+        <div class="panel-title" style="margin-bottom:8px;margin-top:10px;">Blend Mode</div>
+        <select class="inspector-select" style="width:100%;margin-bottom:0;" onchange="showToast('🎨','Blend mode set: '+this.value)">
+          <option>Normal</option>
+          <option>Multiply</option>
+          <option>Screen</option>
+          <option>Overlay</option>
+          <option>Hard Light</option>
+          <option>Soft Light</option>
+          <option>Color Dodge</option>
+          <option>Color Burn</option>
+          <option>Difference</option>
+          <option>Exclusion</option>
+          <option>Hue</option>
+          <option>Saturation</option>
+          <option>Color</option>
+          <option>Luminosity</option>
+        </select>
+      </div>
+    </div><!-- /effects tab -->
+
+    <!-- AUDIO TAB -->
+    <div class="rpanel-section" id="rtab-audio">
+      <div class="inspector-section">
+        <div class="inspector-section-title">Audio Settings</div>
+
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Volume</span>
+            <span class="inspector-slider-val" id="audioVolVal">100%</span>
+          </div>
+          <input type="range" class="full-range" min="0" max="200" value="100" oninput="document.getElementById('audioVolVal').textContent=this.value+'%'">
+        </div>
+
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Pan</span>
+            <span class="inspector-slider-val" id="panVal">C</span>
+          </div>
+          <input type="range" class="full-range" min="-100" max="100" value="0" oninput="let v=this.value;document.getElementById('panVal').textContent=v==0?'C':v>0?'R'+v:'L'+Math.abs(v)">
+        </div>
+
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Pitch</span>
+            <span class="inspector-slider-val" id="pitchVal">0st</span>
+          </div>
+          <input type="range" class="full-range" min="-12" max="12" value="0" oninput="document.getElementById('pitchVal').textContent=this.value+'st'">
+        </div>
+
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Fade In</span>
+            <span class="inspector-slider-val" id="fadeInVal">0s</span>
+          </div>
+          <input type="range" class="full-range" min="0" max="30" value="0" oninput="document.getElementById('fadeInVal').textContent=(this.value/10).toFixed(1)+'s'">
+        </div>
+
+        <div class="inspector-slider-row">
+          <div class="inspector-slider-header">
+            <span class="inspector-slider-label">Fade Out</span>
+            <span class="inspector-slider-val" id="fadeOutVal">0s</span>
+          </div>
+          <input type="range" class="full-range" min="0" max="30" value="0" oninput="document.getElementById('fadeOutVal').textContent=(this.value/10).toFixed(1)+'s'">
+        </div>
+
+        <div class="panel-title" style="margin-bottom:8px;margin-top:4px;">EQ Bands</div>
+        <div style="display:flex;align-items:flex-end;gap:4px;height:60px;margin-bottom:10px;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;">
+            <input type="range" min="-12" max="12" value="0" orient="vertical" style="writing-mode:vertical-lr;height:46px;width:16px;-webkit-appearance:slider-vertical;" oninput="showToast('🎚','EQ updated')">
+            <span style="font-size:9px;color:var(--coco-light);">60Hz</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;">
+            <input type="range" min="-12" max="12" value="2" orient="vertical" style="writing-mode:vertical-lr;height:46px;width:16px;-webkit-appearance:slider-vertical;">
+            <span style="font-size:9px;color:var(--coco-light);">250Hz</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;">
+            <input type="range" min="-12" max="12" value="0" orient="vertical" style="writing-mode:vertical-lr;height:46px;width:16px;-webkit-appearance:slider-vertical;">
+            <span style="font-size:9px;color:var(--coco-light);">1kHz</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;">
+            <input type="range" min="-12" max="12" value="-1" orient="vertical" style="writing-mode:vertical-lr;height:46px;width:16px;-webkit-appearance:slider-vertical;">
+            <span style="font-size:9px;color:var(--coco-light);">4kHz</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;">
+            <input type="range" min="-12" max="12" value="3" orient="vertical" style="writing-mode:vertical-lr;height:46px;width:16px;-webkit-appearance:slider-vertical;">
+            <span style="font-size:9px;color:var(--coco-light);">16kHz</span>
+          </div>
+        </div>
+
+        <div class="panel-title" style="margin-bottom:8px;">Audio Effects</div>
+        <div class="effects-strip">
+          <button class="effect-chip" onclick="toggleEffect(this)">Reverb</button>
+          <button class="effect-chip" onclick="toggleEffect(this)">Echo</button>
+          <button class="effect-chip" onclick="toggleEffect(this)">Compressor</button>
+          <button class="effect-chip" onclick="toggleEffect(this)">De-noise</button>
+          <button class="effect-chip" onclick="toggleEffect(this)">De-hum</button>
+          <button class="effect-chip" onclick="toggleEffect(this)">Normalize</button>
+          <button class="effect-chip" onclick="toggleEffect(this)">Chorus</button>
+          <button class="effect-chip" onclick="toggleEffect(this)">Phaser</button>
+        </div>
+
+        <div class="toggle-wrap" style="margin-top:10px;">
+          <label class="toggle">
+            <input type="checkbox" checked onchange="showToast('🔊','Audio sync toggled')">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+          <span class="toggle-label">Sync to video</span>
+        </div>
+
+        <div class="toggle-wrap">
+          <label class="toggle">
+            <input type="checkbox" onchange="showToast('🎤','Auto-levels toggled')">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+          <span class="toggle-label">Auto-levels</span>
+        </div>
+      </div>
+    </div><!-- /audio tab -->
+
+    <!-- EXPORT TAB -->
+    <div class="rpanel-section" id="rtab-export">
+      <div class="export-section">
+        <div class="export-section-title">🥥 Export Settings</div>
+
+        <div class="export-row">
+          <span class="export-label">Format</span>
+          <select class="inspector-select" id="formatSelect">
+            <option value="mp4">MP4 (H.264)</option>
+            <option value="mp4h265">MP4 (H.265)</option>
+            <option value="mov">MOV (ProRes)</option>
+            <option value="webm">WebM (VP9)</option>
+            <option value="gif">Animated GIF</option>
+            <option value="mp3">MP3 Audio Only</option>
+          </select>
+        </div>
+
+        <div class="export-row">
+          <span class="export-label">Resolution</span>
+          <select class="inspector-select" id="resSelect">
+            <option>480p</option>
+            <option>720p HD</option>
+            <option selected>1080p FHD</option>
+            <option>1440p QHD</option>
+            <option>4K UHD</option>
+          </select>
+        </div>
+
+        <div class="export-row">
+          <span class="export-label">Frame Rate</span>
+          <select class="inspector-select">
+            <option>24 fps</option>
+            <option>25 fps</option>
+            <option selected>30 fps</option>
+            <option>50 fps</option>
+            <option>60 fps</option>
+            <option>120 fps</option>
+          </select>
+        </div>
+
+        <div class="export-row">
+          <span class="export-label">Quality</span>
+          <select class="inspector-select" id="qualSelect">
+            <option>Low</option>
+            <option selected>Medium</option>
+            <option>High</option>
+            <option>Lossless</option>
+          </select>
+        </div>
+
+        <div class="export-row">
+          <span class="export-label">Bitrate</span>
+          <select class="inspector-select">
+            <option>4 Mbps</option>
+            <option selected>8 Mbps</option>
+            <option>16 Mbps</option>
+            <option>40 Mbps</option>
+            <option>100 Mbps</option>
+          </select>
+        </div>
+
+        <div class="export-row">
+          <span class="export-label">Range</span>
+          <select class="inspector-select">
+            <option selected>Full Timeline</option>
+            <option>In/Out Points</option>
+            <option>Selected Clips</option>
+          </select>
+        </div>
+
+        <div class="export-row">
+          <span class="export-label">Color Space</span>
+          <div class="export-badge">Rec.709</div>
+        </div>
+
+        <div class="divider" style="margin:10px 0;"></div>
+
+        <div class="toggle-wrap">
+          <label class="toggle">
+            <input type="checkbox" checked>
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+          <span class="toggle-label">Include audio</span>
+        </div>
+
+        <div class="toggle-wrap">
+          <label class="toggle">
+            <input type="checkbox">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+          <span class="toggle-label">Burn captions</span>
+        </div>
+
+        <div class="toggle-wrap">
+          <label class="toggle">
+            <input type="checkbox">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+          <span class="toggle-label">Add watermark</span>
+        </div>
+
+        <div class="inspector-row" style="margin-top:6px;">
+          <span class="inspector-label">Filename</span>
+          <input class="inspector-input" type="text" value="my-video" id="exportFilename" style="text-align:left;flex:1;">
+        </div>
+
+        <div class="progress-bar-wrap" id="exportProgressWrap" style="display:none;margin-top:10px;">
+          <div class="progress-bar" id="exportProgressBar"></div>
+        </div>
+        <div style="font-size:11px;color:rgba(200,169,126,0.55);text-align:center;margin-top:6px;display:none;" id="exportStatusText">Processing…</div>
+
+        <button class="btn-export" onclick="startExport()">⬇ Download Video</button>
+        <button class="btn-export-ghost" onclick="showToast('☁️','Uploading to cloud…')">☁ Save to Cloud</button>
+        <button class="btn-export-ghost" onclick="showToast('📤','Preparing to share…')">↗ Share Link</button>
+        <button class="btn-export-ghost" onclick="showToast('📱','Exporting for mobile…')">📱 Mobile Export</button>
+      </div>
+    </div><!-- /export tab -->
+
+  </div><!-- /right panel -->
+
+</div><!-- /app-layout -->
+
+<script>
+// ─── STATE ───
+let isPlaying = false;
+let isLooping = false;
+let isRecording = false;
+let currentTool = 'select';
+let playbackInterval = null;
+let progress = 0;
+const video = document.getElementById('previewVideo');
+
+// ─── LOADING SCREEN ───
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const overlay = document.getElementById('loadingOverlay');
+    overlay.style.opacity = '0';
+    overlay.style.pointerEvents = 'none';
+    setTimeout(() => overlay.remove(), 500);
+    showToast('🥥', 'CocoEdit ready!');
+  }, 1900);
+});
+
+// ─── TOAST ───
+let toastTimer = null;
+function showToast(icon, msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastIcon').textContent = icon;
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ─── TOPBAR TABS ───
+function setTopTab(btn, tab) {
+  document.querySelectorAll('.topbar-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  showToast('🎬', tab.charAt(0).toUpperCase() + tab.slice(1) + ' mode');
+}
+
+// ─── LEFT PANEL TABS ───
+function setLTab(btn, tab) {
+  document.querySelectorAll('.lpanel-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.lpanel-section').forEach(s => s.classList.remove('visible'));
+  const sec = document.getElementById('ltab-' + tab);
+  if (sec) sec.classList.add('visible');
+}
+
+// ─── RIGHT PANEL TABS ───
+function setRTab(btn, tab) {
+  document.querySelectorAll('.rpanel-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.rpanel-section').forEach(s => s.classList.remove('visible'));
+  const sec = document.getElementById('rtab-' + tab);
+  if (sec) sec.classList.add('visible');
+}
+
+// ─── PLAYBACK ───
+function togglePlay() {
+  if (video.src) {
+    if (video.paused) {
+      video.play();
+      isPlaying = true;
+    } else {
+      video.pause();
+      isPlaying = false;
+    }
+    document.getElementById('playPauseBtn').textContent = isPlaying ? '⏸' : '▶';
+    document.getElementById('previewDot').className = 'indicator-dot' + (isPlaying ? '' : '');
+    return;
+  }
+  isPlaying = !isPlaying;
+  document.getElementById('playPauseBtn').textContent = isPlaying ? '⏸' : '▶';
+  if (isPlaying) {
+    playbackInterval = setInterval(() => {
+      progress = (progress + 0.3) % 100;
+      updateScrubber(progress);
+    }, 100);
+  } else {
+    clearInterval(playbackInterval);
+  }
+  showToast(isPlaying ? '▶' : '⏸', isPlaying ? 'Playing' : 'Paused');
+}
+
+function seekTo(p) { progress = p; updateScrubber(p); showToast('⏮', 'Start'); }
+function seekToEnd() { progress = 99; updateScrubber(99); showToast('⏭', 'End'); }
+
+function stepBack() {
+  progress = Math.max(0, progress - 5);
+  updateScrubber(progress);
+  showToast('⏪', 'Step back');
+}
+
+function stepForward() {
+  progress = Math.min(99, progress + 5);
+  updateScrubber(progress);
+  showToast('⏩', 'Step forward');
+}
+
+function toggleLoop() {
+  isLooping = !isLooping;
+  document.getElementById('loopBtn').style.color = isLooping ? 'var(--coco-accent)' : '';
+  showToast('🔁', isLooping ? 'Loop ON' : 'Loop OFF');
+}
+
+function toggleRec() {
+  isRecording = !isRecording;
+  const btn = document.getElementById('recBtn');
+  const dot = document.getElementById('statusDot');
+  btn.style.color = isRecording ? '#E53935' : '';
+  dot.className = 'indicator-dot' + (isRecording ? ' rec' : '');
+  showToast(isRecording ? '⏺' : '⏹', isRecording ? 'Recording…' : 'Recording stopped');
+}
+
+function setVolume(val) {
+  document.getElementById('volVal').textContent = val;
+  if (video) video.volume = val / 100;
+}
+
+function updateScrubber(p) {
+  document.getElementById('scrubberFill').style.width = p + '%';
+  document.getElementById('scrubberThumb').style.left = p + '%';
+  const secs = Math.floor(p * 0.6);
+  const mm = String(Math.floor(secs / 60)).padStart(2, '0');
+  const ss = String(secs % 60).padStart(2, '0');
+  document.getElementById('timecodeDisplay').textContent = `00:${mm}:${ss}:00`;
+}
+
+function handleScrubberClick(e) {
+  const track = document.getElementById('scrubberTrack');
+  const rect = track.getBoundingClientRect();
+  progress = Math.max(0, Math.min(100, (e.clientX - rect.left) / rect.width * 100));
+  updateScrubber(progress);
+  if (video.duration) video.currentTime = video.duration * progress / 100;
+}
+
+video.addEventListener('timeupdate', () => {
+  if (video.duration) {
+    const p = video.currentTime / video.duration * 100;
+    updateScrubber(p);
+    const d = video.duration;
+    const dm = String(Math.floor(d / 60)).padStart(2,'0');
+    const ds = String(Math.floor(d % 60)).padStart(2,'0');
+    document.getElementById('durationDisplay').textContent = `00:${dm}:${ds}:00`;
+  }
+});
+
+// ─── SPEED ───
+function setSpeed(s) {
+  document.getElementById('speedSlider').value = s;
+  document.getElementById('speedVal').textContent = s + '×';
+  document.querySelectorAll('.speed-btn').forEach(b => {
+    b.classList.toggle('active', parseFloat(b.textContent) === s);
+  });
+  video.playbackRate = s;
+  showToast('⚡', `Speed: ${s}×`);
+}
+
+function setPlaybackSpeed(v) {
+  video.playbackRate = parseFloat(v);
+}
+
+// ─── FILE IMPORT ───
+function handleFileImport(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  const v = document.getElementById('previewVideo');
+  const ph = document.getElementById('previewPlaceholder');
+  v.src = url;
+  v.style.display = 'block';
+  ph.style.display = 'none';
+  v.load();
+  showToast('📹', 'Imported: ' + file.name);
+
+  const thumb = document.createElement('div');
+  thumb.className = 'media-thumb';
+  thumb.innerHTML = `📹<div class="media-thumb-label">${file.name}</div>`;
+  thumb.onclick = () => { v.src = url; showToast('📹', 'Loaded: ' + file.name); };
+  document.getElementById('mediaGrid').prepend(thumb);
+}
+
+function handlePreviewClick() {
+  if (!video.src) {
+    document.getElementById('fileInput').click();
+  }
+}
+
+// ─── LOAD DEMO CLIP ───
+function loadMediaClip(icon, name) {
+  const ph = document.getElementById('previewPlaceholder');
+  const v = document.getElementById('previewVideo');
+  ph.querySelector('.preview-placeholder-icon').textContent = icon;
+  ph.querySelector('.preview-placeholder-text').textContent = name;
+  v.style.display = 'none';
+  ph.style.display = 'flex';
+  showToast(icon, 'Loaded: ' + name);
+  document.getElementById('durationDisplay').textContent = '00:00:45:00';
+}
+
+// ─── TOOLS ───
+function setTool(t, btn) {
+  currentTool = t;
+  document.querySelectorAll('.tl-btn[id^="tool"]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  showToast('🛠', 'Tool: ' + t.charAt(0).toUpperCase() + t.slice(1));
+}
+
+// ─── UNDO/REDO ───
+const history = [];
+let histIdx = -1;
+
+function undoAction() {
+  showToast('↩', 'Undo');
+}
+
+function redoAction() {
+  showToast('↪', 'Redo');
+}
+
+// ─── FILTERS (real CSS for video) ───
+function applyFilters() {
+  const b = document.getElementById('brightnessSlider').value;
+  const c = document.getElementById('contrastSlider').value;
+  const s = document.getElementById('saturationSlider').value;
+  const blur = document.getElementById('blurSlider') ? document.getElementById('blurSlider').value : 0;
+  video.style.filter = `brightness(${b}%) contrast(${c}%) saturate(${s}%) blur(${blur}px)`;
+}
+
+function applyBlur(v) {
+  applyFilters();
+  showToast('💧', `Blur: ${v}px`);
+}
+
+function applyOpacity(v) {
+  video.style.opacity = v / 100;
+}
+
+// ─── LUT ───
+function applyLUT(el, name) {
+  document.querySelectorAll('.filter-thumb').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const filters = {
+    'Original': 'none',
+    'Coco': 'sepia(0.4) saturate(1.5) hue-rotate(-10deg) brightness(1.05)',
+    'Warm': 'sepia(0.3) saturate(1.3) brightness(1.1)',
+    'Cool': 'hue-rotate(30deg) saturate(0.9) brightness(1.05)',
+    'B&W': 'grayscale(1) contrast(1.2)',
+    'Sepia': 'sepia(1) contrast(1.1)',
+    'Vivid': 'saturate(2) contrast(1.15)',
+    'Fade': 'brightness(1.2) saturate(0.7) contrast(0.8)',
+    'Matte': 'contrast(0.85) brightness(1.1) saturate(0.8)',
+  };
+  video.style.filter = filters[name] || 'none';
+  showToast('🎨', 'LUT: ' + name);
+}
+
+// ─── EFFECTS ───
+function toggleEffect(el) {
+  el.classList.toggle('on');
+  showToast('✨', el.textContent + (el.classList.contains('on') ? ' ON' : ' OFF'));
+}
+
+// ─── TRANSITIONS ───
+function setTransition(el, name) {
+  document.querySelectorAll('.transition-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  showToast('🌀', 'Transition: ' + name);
+}
+
+// ─── TEXT ───
+function toggleTextStyle(btn, style) {
+  btn.classList.toggle('active');
+  showToast('✍', style + ' toggled');
+}
+
+function addTextOverlay(type) {
+  const lane = document.querySelector('#textTrackRow .track-lane');
+  showToast('📝', type + ' added to timeline');
+}
+
+// ─── COLOR SWATCHES ───
+function selectSwatch(el, color) {
+  el.parentElement.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  showToast('🎨', 'Color: ' + color);
+}
+
+// ─── STICKERS ───
+function addSticker(btn, s) {
+  const disp = document.getElementById('stickerDisplay');
+  disp.textContent = s;
+  disp.style.opacity = '1';
+  setTimeout(() => disp.style.opacity = '0', 1800);
+  showToast(s, 'Sticker added!');
+}
+
+// ─── AUDIO ───
+function addAudioTrack(el, name) {
+  el.classList.toggle('active');
+  showToast('🎵', name + ' added to timeline');
+}
+
+// ─── TIMELINE ───
+function setTimelineZoom(v) {
+  showToast('🔎', 'Timeline zoom: ' + v + '×');
+}
+
+// ─── RESET TRANSFORM ───
+function resetTransform() {
+  document.getElementById('rotationSlider').value = 0;
+  document.getElementById('rotationVal').textContent = '0°';
+  document.getElementById('opacitySlider').value = 100;
+  document.getElementById('opacityVal').textContent = '100%';
+  video.style.filter = 'none';
+  video.style.opacity = 1;
+  showToast('↺', 'Transform reset');
+}
+
+// ─── THUMB SELECT ───
+function selectThumb(el) {
+  document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  showToast('🖼', 'Frame selected');
+}
+
+// ─── MEDIA FILTER ───
+function filterMedia(q) {
+  const items = document.querySelectorAll('#ltab-media .media-thumb');
+  items.forEach(item => {
+    const label = item.querySelector('.media-thumb-label');
+    if (label) {
+      item.style.opacity = label.textContent.toLowerCase().includes(q.toLowerCase()) ? '1' : '0.25';
+    }
+  });
+}
+
+// ─── EXPORT ───
+function startExport() {
+  const filename = document.getElementById('exportFilename').value || 'my-video';
+  const fmt = document.getElementById('formatSelect').value;
+
+  if (video.src && !video.src.startsWith('blob:fake')) {
+    downloadRealVideo(video.src, filename + '.' + fmt.replace('mp4h265','mp4'));
+    return;
+  }
+
+  const wrap = document.getElementById('exportProgressWrap');
+  const bar = document.getElementById('exportProgressBar');
+  const status = document.getElementById('exportStatusText');
+  wrap.style.display = 'block';
+  status.style.display = 'block';
+  bar.style.width = '0%';
+
+  let p = 0;
+  const steps = ['Analyzing timeline…','Applying color grade…','Encoding frames…','Mixing audio…','Finalizing…'];
+  let step = 0;
+  showToast('⚙️', 'Export started!');
+
+  const iv = setInterval(() => {
+    p += Math.random() * 8 + 2;
+    if (p >= 100) { p = 100; clearInterval(iv); finishExport(filename, fmt, wrap, bar, status); }
+    bar.style.width = p.toFixed(0) + '%';
+    if (step < steps.length && p > step * 20) {
+      status.textContent = steps[step];
+      step++;
+    }
+  }, 180);
+}
+
+function finishExport(filename, fmt, wrap, bar, status) {
+  status.textContent = '✅ Export complete!';
+  showToast('✅', 'Export complete!');
+  setTimeout(() => {
+    createDemoDownload(filename, fmt);
+    wrap.style.display = 'none';
+    status.style.display = 'none';
+    bar.style.width = '0%';
+  }, 800);
+}
+
+function downloadRealVideo(url, name) {
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  showToast('⬇', 'Downloading: ' + name);
+}
+
+function createDemoDownload(filename, fmt) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1920; canvas.height = 1080;
+  const ctx = canvas.getContext('2d');
+  const grad = ctx.createLinearGradient(0, 0, 1920, 1080);
+  grad.addColorStop(0, '#1C1208');
+  grad.addColorStop(0.5, '#3D2B1F');
+  grad.addColorStop(1, '#6B4226');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 1920, 1080);
+  ctx.fillStyle = '#E8821A';
+  ctx.font = 'bold 120px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('🥥', 960, 500);
+  ctx.fillStyle = '#FDF6E3';
+  ctx.font = '600 72px sans-serif';
+  ctx.fillText('CocoEdit Export', 960, 620);
+  ctx.fillStyle = 'rgba(253,246,227,0.5)';
+  ctx.font = '36px sans-serif';
+  ctx.fillText(filename + '.' + fmt.replace('mp4h265','mp4'), 960, 700);
+
+  canvas.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename + '.png';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    showToast('⬇', 'Downloaded: ' + filename);
+  }, 'image/png');
+}
+
+function triggerExport() {
+  setRTab(document.querySelector('.rpanel-tab:last-of-type'), 'export');
+  document.querySelectorAll('.rpanel-tab').forEach(b => b.classList.remove('active'));
+  document.querySelector('.rpanel-tab:last-child').classList.add('active');
+  document.querySelectorAll('.rpanel-section').forEach(s => s.classList.remove('visible'));
+  document.getElementById('rtab-export').classList.add('visible');
+  startExport();
+}
+
+// ─── FULLSCREEN ───
+function toggleFullscreen() {
+  const frame = document.getElementById('previewFrame');
+  if (!document.fullscreenElement) {
+    frame.requestFullscreen && frame.requestFullscreen();
+    showToast('⛶', 'Fullscreen');
+  } else {
+    document.exitFullscreen && document.exitFullscreen();
+  }
+}
+
+// ─── WAVEFORM CANVAS ───
+function drawWaveform() {
+  const canvas = document.getElementById('waveformCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = 'rgba(0,0,0,0)';
+  ctx.fillRect(0, 0, w, h);
+  const bars = 80;
+  const bw = w / bars;
+  for (let i = 0; i < bars; i++) {
+    const amp = Math.random() * 0.6 + 0.1;
+    const bh = h * amp;
+    const x = i * bw;
+    const y = (h - bh) / 2;
+    const grad = ctx.createLinearGradient(0, y, 0, y + bh);
+    grad.addColorStop(0, 'rgba(212,168,67,0.9)');
+    grad.addColorStop(0.5, 'rgba(232,130,26,0.8)');
+    grad.addColorStop(1, 'rgba(212,168,67,0.5)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.roundRect(x + 1, y, bw - 2, bh, 1);
+    ctx.fill();
+  }
+}
+
+drawWaveform();
+setInterval(drawWaveform, 500);
+
+// ─── HISTOGRAM CANVAS ───
+function drawHistogram() {
+  const canvas = document.getElementById('histCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+  const channels = [
+    { color: 'rgba(229,57,53,0.55)' },
+    { color: 'rgba(76,175,80,0.55)' },
+    { color: 'rgba(55,138,221,0.55)' },
+  ];
+  channels.forEach(ch => {
+    ctx.fillStyle = ch.color;
+    ctx.beginPath();
+    ctx.moveTo(0, h);
+    const pts = 64;
+    for (let i = 0; i <= pts; i++) {
+      const x = (i / pts) * w;
+      const bell = Math.exp(-Math.pow((i / pts - 0.55 + (Math.random() * 0.1 - 0.05)) * 4, 2));
+      const y = h - bell * h * 0.85;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.lineTo(w, h);
+    ctx.closePath();
+    ctx.fill();
+  });
+}
+
+drawHistogram();
+
+// ─── RULER CANVAS ───
+function drawRuler() {
+  const canvas = document.getElementById('rulerCanvas');
+  if (!canvas) return;
+  canvas.width = canvas.parentElement.offsetWidth || 800;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = 'rgba(200,169,126,0.25)';
+  for (let i = 0; i <= 60; i++) {
+    const x = (i / 60) * w;
+    const isMajor = i % 5 === 0;
+    ctx.fillRect(x, isMajor ? 8 : 13, 1, isMajor ? 12 : 7);
+    if (isMajor) {
+      ctx.fillStyle = 'rgba(200,169,126,0.5)';
+      ctx.font = '9px Space Mono, monospace';
+      ctx.fillText(i + 's', x + 2, 9);
+      ctx.fillStyle = 'rgba(200,169,126,0.25)';
+    }
+  }
+}
+
+drawRuler();
+window.addEventListener('resize', drawRuler);
+
+// ─── KEYBOARD SHORTCUTS ───
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  switch(e.key) {
+    case ' ': e.preventDefault(); togglePlay(); break;
+    case 'ArrowLeft': e.preventDefault(); stepBack(); break;
+    case 'ArrowRight': e.preventDefault(); stepForward(); break;
+    case 'Home': seekTo(0); break;
+    case 'End': seekToEnd(); break;
+    case 'z': if (e.metaKey || e.ctrlKey) { e.shiftKey ? redoAction() : undoAction(); } break;
+    case 'i': setTool('blade', document.getElementById('toolBlade')); break;
+    case 'v': setTool('select', document.getElementById('toolSelect')); break;
+    case 'l': toggleLoop(); break;
+    case 'm': showToast('🔇','Track muted'); break;
+  }
+});
+</script>
 </body>
 </html>
